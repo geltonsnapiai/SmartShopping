@@ -4,11 +4,21 @@ import { FetchData } from "./components/FetchData";
 import { Home } from "./components/Home";
 import { Navigate, Outlet } from 'react-router-dom';
 import { authenticationService } from "./components/auth/AuthenticationServce";
+import Login from "./components/Login";
+import Register from "./components/Register";
 
 export const AppRoutes = [
     {
         index: true,
         element: <Home />
+    },
+    {
+        path: '/login',
+        element: <Login />
+    },
+    {
+        path: '/register',
+        element: <Register />
     },
     {
         path: '/counter',
