@@ -9,7 +9,7 @@ export class SideBar extends Component {
 
     render() {
         return (
-            <div className={`sidebar pe-4 pb-3 ${this.props.open && "open"}`}>
+            <div className={`sidebar pe-4 pb-3 ${this.props.open ? "open" : ""}`}>
                 <Navbar className="navbar bg-secondary navbar-dark">
                     <NavbarBrand className="navbar-brand mx-4 mb-3" tag={Link} to="/">
                         <h4 className="text-primary"><i className="fa fa-user-edit me-2"></i>SmartShopping</h4>
