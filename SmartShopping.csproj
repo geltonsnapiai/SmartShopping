@@ -11,10 +11,21 @@
     <SpaProxyServerUrl>https://localhost:44433</SpaProxyServerUrl>
     <SpaProxyLaunchCommand>npm start</SpaProxyLaunchCommand>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>9b82553a-c407-45be-9e78-d1ccfa5ab037</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.0-rc.1.22427.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.SpaProxy" Version="6.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.0-rc.1.22426.7" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.0-rc.1.22426.7">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.0-rc.1.22426.7" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.23.1" />
   </ItemGroup>
 
   <ItemGroup>

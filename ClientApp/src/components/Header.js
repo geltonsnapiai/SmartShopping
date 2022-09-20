@@ -31,7 +31,7 @@ class Header extends Component {
                         <NavbarBrand className="navbar-brand d-flex d-lg-none me-4" tag={Link} to="/">
                             <h2 className="text-primary mb-0"><NamedLogo/></h2>
                         </NavbarBrand>
-                    <Button color="primary" className="m-2" onClick={() => authenticationService.logOut()}>
+                    <Button color="primary" className="m-2" onClick={() => authenticationService.logout()}>
                         Log out
                     </Button>
                 </Navbar>

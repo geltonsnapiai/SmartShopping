@@ -1,8 +1,42 @@
+using SmartShopping;
+using SmartShopping.Data;
+using SmartShopping.Services;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+Secrets.SecretKey = builder.Configuration["SecretKey"];
 
-builder.Services.AddControllersWithViews();
+// Add services to the container.
+builder.Services.AddCors();
+builder.Services.AddDbContext<UserContext>(opt => opt.UseSqlServer(connectionString));
+builder.Services.AddControllers();
+
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ITokenService, TokenService>();
+
+builder.Services.AddAuthentication(opt =>
+{
+    opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = "https://localhost:7100",
+        ValidAudience = "https://localhost:7100",
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Secrets.SecretKey))
+    };
+});
 
 var app = builder.Build();
 
@@ -14,14 +48,15 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles();
-app.UseRouting();
+app.UseCors(options => options
+    //.WithOrigins(new[] { "http:/localhost:44433" })
+    .AllowAnyOrigin()
+    .AllowAnyHeader()
+    .AllowAnyMethod()
+);
+app.UseAuthentication();
+app.UseAuthorization();
 
-
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller}/{action=Index}/{id?}");
-
-app.MapFallbackToFile("index.html"); ;
+app.MapControllers();
 
 app.Run();
