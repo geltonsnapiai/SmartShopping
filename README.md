@@ -6,4 +6,4 @@ See dev [plan](PLAN.md).
 
 
 ## Team
- Lukas, Danielius, Rytis, Liepa
+ Lukas Zajončkovskis, Danielius Semenas, Rytis Trimonis, Liepa Mazuronytė
