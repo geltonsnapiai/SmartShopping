@@ -6,4 +6,4 @@ See dev [plan](PLAN.md).
 
 
 ## Team
- Lukas, Danielius, Rytis
+ Lukas, Danielius, Rytis, Liepa
