@@ -1,22 +1,21 @@
-﻿using SmartShopping.Models;
+﻿using SmartShopping.Data;
+using SmartShopping.Models;
 
-namespace SmartShopping.Data
+namespace SmartShopping.Services
 {
-    public class UserRepository : IUserRepository
+    public class UserService : IUserService
     {
         private readonly UserContext _context;
 
-        public UserRepository(UserContext context)
+        public UserService(UserContext context)
         {
             _context = context;
         }
 
-        public User Create(User user)
+        public void CreateUser(User user)
         {
             _context.Users.Add(user);
             _context.SaveChanges();
-
-            return user;
         }
 
         public User GetUserByEmail(string email)
@@ -29,9 +28,10 @@ namespace SmartShopping.Data
             return _context.Users.FirstOrDefault(u => u.Id == id);
         }
 
-        public void SaveChanges()
+        public void UpdateUser(User user)
         {
-            _context.SaveChanges();
+            if (_context.Users.Contains(user))
+                _context.SaveChanges();
         }
     }
 }

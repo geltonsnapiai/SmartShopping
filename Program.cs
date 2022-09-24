@@ -16,7 +16,7 @@ builder.Services.AddCors();
 builder.Services.AddDbContext<UserContext>(opt => opt.UseSqlServer(connectionString));
 builder.Services.AddControllers();
 
-builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 
 builder.Services.AddAuthentication(opt =>
@@ -49,7 +49,6 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseCors(options => options
-    //.WithOrigins(new[] { "http:/localhost:44433" })
     .AllowAnyOrigin()
     .AllowAnyHeader()
     .AllowAnyMethod()

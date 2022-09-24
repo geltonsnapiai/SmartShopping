@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SmartShopping.Data;
 using SmartShopping.Dtos;
 using SmartShopping.Services;
 using SmartShopping.Models;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.IdentityModel.Tokens;
+using System.Reflection.Metadata.Ecma335;
+using Azure.Core;
 
 namespace SmartShopping.Controllers
 {
@@ -12,18 +14,26 @@ namespace SmartShopping.Controllers
     [Route("api/[controller]")]
     public class AuthController : Controller
     {
-        private readonly IUserRepository _userRepository;
+        private readonly ILogger<AuthController> _logger;
+        private readonly IUserService _userService;
         private readonly ITokenService _tokenService;
 
-        public AuthController(IUserRepository userRepository, ITokenService tokenService)
+        public AuthController(ILogger<AuthController> logger, IUserService userService, ITokenService tokenService)
         {
-            _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+            _logger = logger;
+            _userService = userService ?? throw new ArgumentNullException(nameof(userService));
             _tokenService = tokenService ?? throw new ArgumentNullException(nameof(tokenService));
         }
 
         [HttpPost("register")]
         public IActionResult Register(RegisterDto dto)
         {
+            if (dto is null)
+                return BadRequest("Invalid client request");
+
+            // TODO: Add validation.
+            
+
             var user = new User
             {
                 Id = Guid.NewGuid(),
@@ -33,42 +43,26 @@ namespace SmartShopping.Controllers
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password)
             };
 
-            user = _userRepository.Create(user);
-
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, user.Role)
-            };
-
-            var accessToken = _tokenService.GenerateAccessToken(claims);
-            var refreshToken = _tokenService.GenerateRefreshToken();
-
+            (string accessToken, string refreshToken) = _tokenService.GenerateTokens(user);
             user.RefreshToken = refreshToken;
             user.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
-
-            _userRepository.SaveChanges();
+            
+            _userService.CreateUser(user);
 
             return Created("success", new
             {
-                tokens = new
-                {
-                    token = accessToken,
-                    refreshToken = refreshToken
-                },
-                user = user
+                AccessToken = accessToken,
+                RefreshToken = refreshToken
             });
         }
 
         [HttpPost("login")]
         public IActionResult Login(LoginDto dto)
         {
-            if (dto is null)
-            {
+            if (dto is null || dto.Email.IsNullOrEmpty() || dto.Password.IsNullOrEmpty())
                 return BadRequest("Invalid client request");
-            }
 
-            var user = _userRepository.GetUserByEmail(dto.Email);
+            var user = _userService.GetUserByEmail(dto.Email);
 
             if (user == null)
                 return BadRequest(new { message = "Invalid Credentials" });
@@ -76,37 +70,75 @@ namespace SmartShopping.Controllers
             if (!BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
                 return BadRequest(new { message = "Invalid Credentials" });
 
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, user.Role)
-            };
+            var tokens = _tokenService.GenerateTokens(user);
 
-            var accessToken = _tokenService.GenerateAccessToken(claims);
-            var refreshToken = _tokenService.GenerateRefreshToken();
-
-            user.RefreshToken = refreshToken;
+            user.RefreshToken = tokens.RefreshToken;
             user.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
 
-            _userRepository.SaveChanges();
+            _userService.UpdateUser(user);
 
-            return Ok(new 
+            return Ok(new
             {
-                tokens = new 
-                {
-                    token = accessToken,
-                    refreshToken = refreshToken
-                },
-                user = user
+                AccessToken = tokens.AccessToken,
+                RefreshToken = tokens.RefreshToken
             });
+        }
+
+        [HttpPost("refresh")]
+        public IActionResult Refresh(TokenDto dto)
+        {
+            if (dto is null || dto.AccessToken.IsNullOrEmpty() || dto.RefreshToken.IsNullOrEmpty())
+                return BadRequest("Invalid client request");
+
+            string accessToken = dto.AccessToken;
+            string refreshToken = dto.RefreshToken;
+
+            if (accessToken is null || refreshToken is null)
+                return BadRequest("Invalid client request");
+
+            var email = _tokenService.GetEmailFromAccessToken(accessToken);
+            if (email == null) return BadRequest("Invalid client request");
+            
+            var user = _userService.GetUserByEmail(email);
+
+            if (user == null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
+                return BadRequest("Invalid client request");
+
+            var tokens = _tokenService.GenerateTokens(user);
+
+            user.RefreshToken = tokens.RefreshToken;
+            user.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
+            _userService.UpdateUser(user);
+
+            return Ok(new
+            {
+                AccessToken = tokens.AccessToken,
+                RefreshToken = tokens.RefreshToken
+            });
+        }
+
+        [HttpPost("revoke"), Authorize]
+        public IActionResult Revoke()
+        {
+            var email = User.FindFirst(ClaimTypes.Email)?.Value;
+            if (email is null) return BadRequest();
+
+            var user = _userService.GetUserByEmail(email);
+            if (user == null) return BadRequest();
+
+            user.RefreshToken = null;
+            _userService.UpdateUser(user);
+
+            return NoContent();
         }
 
         [HttpGet("user"), Authorize]
         public IActionResult GetUser()
         {
-            var email = User.FindFirst(ClaimTypes.Email).Value;
+            var email = User.FindFirst(ClaimTypes.Email)?.Value;
+            if (email is null) return BadRequest();
 
-            var user = _userRepository.GetUserByEmail(email);
+            var user = _userService.GetUserByEmail(email);
             if (user == null) return BadRequest();
 
             return Ok(user);
