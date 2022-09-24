@@ -16,7 +16,7 @@ class AuthenticationService {
             },
             body: JSON.stringify(credentials)
         };
-        return await fetch("api/auth/register", requestOptions)
+        return await fetch("/auth/register", requestOptions)
                         .then(response => response.json());
     }
 
