@@ -34,6 +34,9 @@ export class SideBar extends Component {
                         <NavItem>
                             <NavLink tag={RRNavLink} to="/fetch-data"><i className="fa fa-cloud me-2"/>Fetch data</NavLink>
                         </NavItem>
+                        <NavItem>
+                            <NavLink tag={RRNavLink} to="/groceries"><i className="fa fa-cloud me-2" />Groceries</NavLink>
+                        </NavItem>
                     </div>
                 </Navbar>
             </div>
