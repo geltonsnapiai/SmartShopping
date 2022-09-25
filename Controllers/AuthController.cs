@@ -5,8 +5,6 @@ using SmartShopping.Models;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
-using System.Reflection.Metadata.Ecma335;
-using Azure.Core;
 
 namespace SmartShopping.Controllers
 {
@@ -17,12 +15,14 @@ namespace SmartShopping.Controllers
         private readonly ILogger<AuthController> _logger;
         private readonly IUserService _userService;
         private readonly ITokenService _tokenService;
+        private readonly IValidationService _validationService;
 
-        public AuthController(ILogger<AuthController> logger, IUserService userService, ITokenService tokenService)
+        public AuthController(ILogger<AuthController> logger, IUserService userService, ITokenService tokenService, IValidationService validationService)
         {
             _logger = logger;
             _userService = userService ?? throw new ArgumentNullException(nameof(userService));
             _tokenService = tokenService ?? throw new ArgumentNullException(nameof(tokenService));
+            _validationService = validationService ?? throw new ArgumentNullException(nameof(validationService)); ;
         }
 
         [HttpPost("register")]
@@ -31,8 +31,10 @@ namespace SmartShopping.Controllers
             if (dto is null)
                 return BadRequest("Invalid client request");
 
-            // TODO: Add validation.
-            
+            string? errorMessage;
+            if (!_validationService.ValidateUsername(dto.Name, out errorMessage)) return ValidationProblem(errorMessage);
+            if (!_validationService.ValidateEmail(dto.Email, out errorMessage)) return ValidationProblem(errorMessage);
+            if (!_validationService.ValidatePassword(dto.Password, out errorMessage)) return ValidationProblem(errorMessage);
 
             var user = new User
             {
@@ -64,11 +66,8 @@ namespace SmartShopping.Controllers
 
             var user = _userService.GetUserByEmail(dto.Email);
 
-            if (user == null)
-                return BadRequest(new { message = "Invalid Credentials" });
-
-            if (!BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
-                return BadRequest(new { message = "Invalid Credentials" });
+            if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
+                return BadRequest(new { message = "Invalid credentials" });
 
             var tokens = _tokenService.GenerateTokens(user);
 
@@ -92,9 +91,6 @@ namespace SmartShopping.Controllers
 
             string accessToken = dto.AccessToken;
             string refreshToken = dto.RefreshToken;
-
-            if (accessToken is null || refreshToken is null)
-                return BadRequest("Invalid client request");
 
             var email = _tokenService.GetEmailFromAccessToken(accessToken);
             if (email == null) return BadRequest("Invalid client request");
