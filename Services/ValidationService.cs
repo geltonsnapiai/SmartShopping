@@ -1,4 +1,5 @@
 ﻿using Microsoft.IdentityModel.Tokens;
+using SmartShopping.Dtos;
 using System.Text.RegularExpressions;
 
 namespace SmartShopping.Services
@@ -15,6 +16,24 @@ namespace SmartShopping.Services
         public ValidationService(IUserService userService)
         {
             _userService = userService;
+        }
+
+        public bool ValidateRegistration(RegisterDto dto, out string? errorMessage)
+        {
+            if (!ValidateUsername(dto.Name, out errorMessage)) return false;
+            if (!ValidateEmail(dto.Email, out errorMessage)) return false;
+            if (!ValidatePassword(dto.Password, out errorMessage)) return false;
+            return true;
+        }
+
+        public async Task<(bool Ok, string? ErrorMessage)> ValidateRegistrationAsync(RegisterDto dto)
+        {
+            string? errorMessage;
+            if (!ValidateUsername(dto.Name, out errorMessage)) return (false, errorMessage);
+            var (ok, err) = await ValidateEmailAsync(dto.Email);
+            if (!ok) return (false, err);
+            if (!ValidatePassword(dto.Password, out errorMessage)) return (false, errorMessage);
+            return (true, null);
         }
 
         public bool ValidateUsername(string username, out string? errorMessage)
@@ -52,6 +71,32 @@ namespace SmartShopping.Services
 
             errorMessage = null;
             return true;
+        }
+
+        public async Task<(bool Ok, string? ErrorMessage)> ValidateEmailAsync(string email)
+        {
+            string? errorMessage = null;
+
+            if (email.IsNullOrEmpty())
+            {
+                errorMessage = "Email is empty";
+                return (false, errorMessage);
+            }
+
+            if (!regex.IsMatch(email))
+            {
+                errorMessage = "Invalid email";
+                return (false, errorMessage);
+            }
+
+            var user = await _userService.GetUserByEmailAsync(email);
+            if (user is not null)
+            {
+                errorMessage = "Email is taken";
+                return (false, errorMessage);
+            }
+
+            return (true, null);
         }
 
         public bool ValidatePassword(string password, out string? errorMessage)
