@@ -26,4 +26,8 @@
     <ProjectReference Include="..\SmartShopping.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="k6\" />
+  </ItemGroup>
+
 </Project>
