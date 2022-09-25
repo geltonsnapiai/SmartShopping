@@ -18,6 +18,7 @@ builder.Services.AddControllers();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddTransient<IValidationService, ValidationService>();
 
 builder.Services.AddAuthentication(opt =>
 {

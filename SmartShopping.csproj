@@ -30,8 +30,16 @@
 
   <ItemGroup>
     <!-- Don't publish the SPA source files, but do show them in the project files list -->
+    <Compile Remove="SmartShopping.Tests\**" />
+    <Compile Remove="Tests\**" />
     <Content Remove="$(SpaRoot)**" />
+    <Content Remove="SmartShopping.Tests\**" />
+    <Content Remove="Tests\**" />
+    <EmbeddedResource Remove="SmartShopping.Tests\**" />
+    <EmbeddedResource Remove="Tests\**" />
     <None Remove="$(SpaRoot)**" />
+    <None Remove="SmartShopping.Tests\**" />
+    <None Remove="Tests\**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
   </ItemGroup>
 
