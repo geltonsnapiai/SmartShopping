@@ -19,13 +19,21 @@ function Register() {
             repeatPassword: document.getElementById("repeatPassword").value
         }
     }
-
+    var validRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     function validateUserInput(input) {
-        if (input.username === "") return { ok: false, err: { id: "username", msg: "Enter username" }};
-        if (input.email === "")  return { ok: false, err: { id: "email", msg: "Enter email" }};
-        if (input.password === "")  return { ok: false, err: { id: "password", msg: "Enter password" }};
-        if (input.repeatPassword === "")  return { ok: false, err: { id: "repeatPassword", msg: "Repeat password" }};
-        if (input.password !== input.repeatPassword)  return { ok: false, err: { id: "repeatPassword", msg: "Passwords don't match" }};
+        if (input.username === "") return { ok: false, err: { id: "username", msg: "Enter username" } };
+
+        if (input.email === "") return { ok: false, err: { id: "email", msg: "Enter email" } };
+        if (!input.email.match(validRegex)) return { ok: false, err: { id: "email", msg: "Email is not valid" } };
+
+        if (input.password === "") return { ok: false, err: { id: "password", msg: "Enter password" } };
+        if (input.password.length < 8) return { ok: false, err: { id: "password", msg: "The password must be at least 8 characters" } };
+        if (input.password.length > 15) return { ok: false, err: { id: "password", msg: "The password can't be longer than 15 characters" } };
+        if (!input.password.match(/[a-z]/g) || !input.password.match(/[A-Z]/g)) return { ok: false, err: { id: "password", msg: "The password must include one lowercase and uppercase letter" } };
+        if (!input.password.match(/[0-9]/g)) return { ok: false, err: { id: "password", msg: "The password must include a number" } };
+
+        if (input.repeatPassword === "") return { ok: false, err: { id: "repeatPassword", msg: "Repeat password" } };
+        if (input.password !== input.repeatPassword) return { ok: false, err: { id: "repeatPassword", msg: "Passwords don't match" } };
         return { ok: true };
     }
 
