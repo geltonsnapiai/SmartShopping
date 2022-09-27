@@ -35,7 +35,9 @@ builder.Services.AddAuthentication(opt =>
         ValidateIssuerSigningKey = true,
         ValidIssuer = "https://localhost:7100",
         ValidAudience = "https://localhost:7100",
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Secrets.SecretKey))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Secrets.SecretKey)),
+        // TODO: remove for deployment. This is only for debugging purposes.
+        ClockSkew = TimeSpan.Zero
     };
 });
 
