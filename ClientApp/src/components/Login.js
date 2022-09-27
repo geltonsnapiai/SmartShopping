@@ -60,18 +60,23 @@ function Login() {
                                 let userData = getUserInput();
                                 let valid = validateUserInput(userData);
                                 if (valid.ok) {
-                                       setError(null);
-                                //     authenticationService.login({
-                                //         email: userData.email,
-                                //         password: userData.password
-                                //     });
+                                    setError(null);
+                                    authenticationService.login({
+                                        email: userData.email,
+                                        password: userData.password
+                                    }).then(status => {
+                                        if (status.ok) {
+                                            console.log("Great success!");
+                                        }
+                                        else {
+                                            console.error("Error: ", status.error);
+                                            setError({ id: null, msg: status.error});
+                                        }
+                                    });
                                 }
                                 else {
                                     setError(valid.err);
                                 }
-                                
-                                authenticationService.login();
-                                navigate('/');
                             }}>Log In</Button>
                             <p className="text-center mb-0">
                                 Don't have an Account? <Link to="/register">Register</Link>

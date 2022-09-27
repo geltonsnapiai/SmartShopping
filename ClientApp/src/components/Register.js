@@ -65,6 +65,8 @@ function Register() {
                                 <Input type="password" className="form-control" placeholder="Password" id="repeatPassword"/>
                                 <Label>Repeat password</Label>
                             </div>
+                            { (error !== null && error.id === null ) &&
+                            <div className="text-end" style={{color: "var(--primary)"}}><p>{error.msg}</p></div> }
                             <Button color="primary" className="py-3 w-100 mb-4" onClick={() => {
                                 let userData = getUserInput();
                                 let valid = validateUserInput(userData);
@@ -74,14 +76,19 @@ function Register() {
                                         name: userData.username,
                                         email: userData.email,
                                         password: userData.password
-                                    }).then((result) => console.log(result));
+                                    }).then(status => {
+                                        if (status.ok) {
+                                            console.log("Great success!");
+                                        }
+                                        else {
+                                            console.error("Error: ", status.error);
+                                            setError({ id: null, msg: status.error});
+                                        }
+                                    });
                                 }
                                 else {
                                     setError(valid.err);
                                 }
-                                
-                                //authenticationService.logIn();
-                                //navigate('/');
                             }}>Register</Button>
                             <p className="text-center mb-0">
                                 Already have an Account? <Link to="/login">Log In</Link>
