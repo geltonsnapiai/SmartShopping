@@ -15,22 +15,16 @@ namespace SmartShopping.Controllers
     {
         // GET: /<controller>/
         [HttpPost("submit")]
-        public IActionResult Submit ([FromBody] ProductList products)
+        public IActionResult Submit([FromBody] ProductList products)
         {
-            foreach(var p in products.Products)
+            foreach (var p in products.Products)
             {
-                if(p.ProductName == null || p.Shop == null || p.Price == null || p.DateOfPurchase == null)
-                {
+                if (String.IsNullOrEmpty(p.ProductName) || String.IsNullOrEmpty(p.Shop) || Double.IsNaN(p.Price) || !p.DateOfPurchase.HasValue)
                     return BadRequest("All fields should be filled");
-                }
-                else
-                {
-                    return Ok($"Product/Products is/are createds");
-                }
             }
-            return BadRequest();
-            
+
+            return Ok("Objects are created.");
+
         }
     }
 }
-
