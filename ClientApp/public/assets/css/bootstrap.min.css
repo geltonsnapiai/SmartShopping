@@ -12536,4 +12536,9 @@ fieldset:disabled .btn {
     .d-print-none {
         display: none !important
     }
+    .search-button {
+        border-radius: 12px;
+        border: none;
+
+    }
 }
