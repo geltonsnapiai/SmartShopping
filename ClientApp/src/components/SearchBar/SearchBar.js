@@ -1,25 +1,32 @@
-import React from 'react'
+import React, { useState } from 'react'
+
 import "./searchBar.css"
-import SearchButton from "../SearchButton/SearchButton"
 
-function SearchBar({placeHolder, data}) {
+function SearchBar({placeHolder}) {
+
+  const [searchQuery, setSearchQuery] = useState("");
+
+  function handle_submit(e) {
+    e.preventDefault()
+
+    if ( ! searchQuery ) return;
+
+    window.location.href = `search/?q=${searchQuery}`;
+  }
+
   return (
-    <div className="SearchBar">
-        <div className="search-input"> 
-            <input type="text" className="search-input"  placeHolder={placeHolder}/>
+    <div>
+        <form onSubmit={handle_submit}> 
+          <i className="fa fa-search" style={{ marginRight: "10px", cursor: "pointer" }} value={searchQuery} onClick={handle_submit}/>
+          <input className="search-input" placeholder={placeHolder} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+          <hr className="hr"/>
+        </form>
 
-            <span>
-              <button type="submit"> 
-                <i className="fa fa-search"></i>
-              </button>
-            </span>
-            
+        <div style={{marginTop: "30px"}}>
+          <span style={{fontSize:30}}>Recently added</span>
         </div>
-        <hr className="hr"/>
-
-        <div className="dataResult"></div>
     </div>
   )
-}
+} 
 
-export default SearchBar
+export default SearchBar;
