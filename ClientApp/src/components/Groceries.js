@@ -1,65 +1,90 @@
-﻿import React, { Component } from 'react';
+﻿import React from "react";
+import { Input, Table, Form } from "reactstrap";
+import { useState } from "react";
 
-export class Groceries extends Component {
-    constructor() {
-        super();
-        this.state = {
-            groceries: []
-        }
-    }
+export function Groceries() {
+    const [groceries, setGroceries] = useState([]);
+    const [addFormData, setAddFormData] = useState({
+        store: "",
+        item: "",
+        price: "",
+        date: "",
+    });
 
-    handleSubmit = (e) => {
-        e.preventDefault();
-        let groceries = this.state.groceries;
-        let storeName = this.refs.storeName.value;
-        let itemName = this.refs.itemName.value;
-        let itemPrice = this.refs.itemPrice.value;
+    const handleAddFormChange = (event) => {
+        event.preventDefault();
+        const fieldName = event.target.getAttribute("name");
+        const fieldValue = event.target.value;
 
-        let newGroceries = {
-            "storeName" : storeName,
-            "itemName" : itemName,
-            "itemPrice" : itemPrice,
-        }
-        groceries.push(newGroceries);
+        const newFormData = { ...addFormData };
+        newFormData[fieldName] = fieldValue;
 
-        this.setState({
-            groceries : groceries
-        })
+        setAddFormData(newFormData);
+    };
 
-        this.refs.groceriesForm.reset();
-    }
+    const handleAddFormSubmit = (event) => {
+        event.preventDefault();
 
-    render(){
-        let groceries = this.state.groceries;
-        return(
-            <div>
-                <form ref="groceriesForm">
+        const newGrocery = {
+            store: addFormData.store,
+            item: addFormData.item,
+            price: addFormData.price,
+            date: addFormData.date,
+        };
+
+        const newGroceries = [...groceries, newGrocery];
+        setGroceries(newGroceries);
+    };
+
+    return (
+        <div class="bg-secondary rounded h-100 p-4">
+            <Form onSubmit={handleAddFormSubmit}>
                 <label>Store Name</label>
-                <input type="text" ref="storeName"/>
+                <select
+                    class="form-select"
+                    name="store"
+                    onChange={handleAddFormChange}
+                >
+                    <option></option>
+                    <option>Rimi</option>
+                    <option>Iki</option>
+                    <option>Maxima</option>
+                    <option>Lidl</option>
+                    <option>Norfa</option>
+                </select>
                 <label>Item Name</label>
-                <input type="text" ref="itemName"/>
+                <Input type="text" name="item" onChange={handleAddFormChange} />
                 <label>Item Price</label>
-                <input type="number" ref="itemPrice"/>
-                <button onClick={e => this.handleSubmit(e)}>Save</button>
-            </form>
-            <table width="500">
-                <tr>
-                    <th>Store Name</th>
-                    <th>Item Name</th>
-                    <th>Item Price</th>
-                </tr>
-                {
-                    groceries.map( (data, i) => 
-                    <tr key={i}>
-                        <td>{data.storeName}</td>
-                        <td>{data.itemName}</td>
-                        <td>{data.itemPrice}</td>
-                    </tr> )
-                }
-            </table>
-            </div>
-        )
-    }
-
-
+                <Input
+                    type="number"
+                    step="0.01"
+                    name="price"
+                    onChange={handleAddFormChange}
+                />
+                <label>Item Date</label>
+                <Input type="date" name="date" onChange={handleAddFormChange} />
+                <button class="m-2 btn btn-primary">Save</button>
+            </Form>
+            <Table>
+                <thead>
+                    <tr>
+                        <th>Store</th>
+                        <th>Item</th>
+                        <th>Price</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {groceries.map((data, i) => (
+                        <tr key={i}>
+                            <td>{data.store}</td>
+                            <td>{data.item}</td>
+                            <td>{data.price}</td>
+                            <td>{data.date}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </Table>
+        </div>
+    );
 }
