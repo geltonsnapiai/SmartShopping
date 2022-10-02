@@ -1,5 +1,5 @@
 ﻿import React from "react";
-import { Input, Table, Form } from "reactstrap";
+import { Input, Table, Form, Button } from "reactstrap";
 import { useState } from "react";
 
 export function Groceries() {
@@ -41,29 +41,41 @@ export function Groceries() {
             <Form onSubmit={handleAddFormSubmit}>
                 <label>Store Name</label>
                 <select
+                    required
                     class="form-select"
                     name="store"
                     onChange={handleAddFormChange}
                 >
                     <option></option>
-                    <option>Rimi</option>
                     <option>Iki</option>
-                    <option>Maxima</option>
                     <option>Lidl</option>
+                    <option>Maxima</option>
                     <option>Norfa</option>
+                    <option>Rimi</option>
                 </select>
                 <label>Item Name</label>
-                <Input type="text" name="item" onChange={handleAddFormChange} />
+                <Input
+                    required
+                    type="text"
+                    name="item"
+                    onChange={handleAddFormChange}
+                />
                 <label>Item Price</label>
                 <Input
+                    required
                     type="number"
                     step="0.01"
                     name="price"
                     onChange={handleAddFormChange}
                 />
-                <label>Item Date</label>
-                <Input type="date" name="date" onChange={handleAddFormChange} />
-                <button class="m-2 btn btn-primary">Save</button>
+                <label>Purchase Date</label>
+                <Input
+                    required
+                    type="date"
+                    name="date"
+                    onChange={handleAddFormChange}
+                />
+                <Button color="primary">Save</Button>
             </Form>
             <Table>
                 <thead>
