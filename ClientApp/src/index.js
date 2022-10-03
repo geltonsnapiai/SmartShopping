@@ -5,10 +5,13 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
+import { authenticationService } from './components/auth/AuthenticationServce';
 
 const baseUrl = document.getElementsByTagName('base')[0].getAttribute('href');
 const rootElement = document.getElementById('root');
 const root = createRoot(rootElement);
+
+authenticationService.checkIfLoggedIn();
 
 root.render(
     <BrowserRouter basename={baseUrl}>

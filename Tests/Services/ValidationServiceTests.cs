@@ -1,6 +1,5 @@
 ﻿using FakeItEasy;
 using SmartShopping.Services;
-using Xunit.Sdk;
 
 namespace SmartShopping.Tests.Services
 {

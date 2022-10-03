@@ -2,6 +2,7 @@ import { Counter } from "./components/Counter";
 import { PageNotFound } from "./components/PageNotFound";
 import { FetchData } from "./components/FetchData";
 import { Search } from "./components/Search";
+import { Groceries } from "./components/Groceries";
 import { Home } from "./components/Home";
 import { Navigate, Outlet } from 'react-router-dom';
 import { authenticationService } from "./components/auth/AuthenticationServce";
@@ -35,6 +36,10 @@ export const AppRoutes = [
         path: '/search',
         element: <Search />,
         auth: true
+    },
+    {
+        path: '/groceries',
+        element: <Groceries />,
     },
     {
         path: '*',

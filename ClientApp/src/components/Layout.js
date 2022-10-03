@@ -20,8 +20,8 @@ class Layout extends Component {
         this.state = { open: false, user: authenticationService.userIsLoggedIn()};
         this.toggleSidebar = this.toggleSidebar.bind(this);
 
-        authenticationService.setLoggedInCallback(() => this.setState({user: true}));
-        authenticationService.setLoggedOutCallback(() => this.setState({user: false}));
+        authenticationService.addLoggedInCallback(() => this.setState({user: true}));
+        authenticationService.addLoggedOutCallback(() => this.setState({user: false}));
     }
 
     toggleSidebar() {

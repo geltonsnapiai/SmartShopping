@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SmartShopping.Migrations
 {
     /// <inheritdoc />
-    public partial class CreateUsersTable : Migration
+    public partial class CreateUserTable : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,7 +16,7 @@ namespace SmartShopping.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Role = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -38,12 +38,6 @@ namespace SmartShopping.Migrations
                 name: "IX_Users_Id",
                 table: "Users",
                 column: "Id",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Users_Name",
-                table: "Users",
-                column: "Name",
                 unique: true);
         }
 
