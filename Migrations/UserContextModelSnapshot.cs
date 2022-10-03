@@ -34,7 +34,7 @@ namespace SmartShopping.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
@@ -56,9 +56,6 @@ namespace SmartShopping.Migrations
                         .IsUnique();
 
                     b.HasIndex("Id")
-                        .IsUnique();
-
-                    b.HasIndex("Name")
                         .IsUnique();
 
                     b.ToTable("Users");
