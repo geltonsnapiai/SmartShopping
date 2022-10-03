@@ -15,7 +15,6 @@ namespace SmartShopping.Data
         {
             builder.Entity<User>(entity => entity.HasIndex(e => e.Id).IsUnique());
             builder.Entity<User>(entity => entity.HasIndex(e => e.Email).IsUnique());
-            builder.Entity<User>(entity => entity.HasIndex(e => e.Name).IsUnique());
         }
     }
 }

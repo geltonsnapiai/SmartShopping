@@ -26,15 +26,14 @@ namespace SmartShopping.Controllers
         }
 
         [HttpPost("register")]
-        public IActionResult Register(RegisterDto dto)
+        public async Task<IActionResult> Register(RegisterDto dto)
         {
             if (dto is null)
                 return BadRequest("Invalid client request");
 
-            string? errorMessage;
-            if (!_validationService.ValidateUsername(dto.Name, out errorMessage)) return ValidationProblem(errorMessage);
-            if (!_validationService.ValidateEmail(dto.Email, out errorMessage)) return ValidationProblem(errorMessage);
-            if (!_validationService.ValidatePassword(dto.Password, out errorMessage)) return ValidationProblem(errorMessage);
+            var (ok, errorMessage) = await _validationService.ValidateRegistrationAsync(dto);
+            if (!ok) 
+                return ValidationProblem(errorMessage);
 
             var user = new User
             {
@@ -49,7 +48,7 @@ namespace SmartShopping.Controllers
             user.RefreshToken = refreshToken;
             user.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
             
-            _userService.CreateUser(user);
+            await _userService.CreateUserAsync(user);
 
             return Created("success", new
             {
@@ -59,12 +58,12 @@ namespace SmartShopping.Controllers
         }
 
         [HttpPost("login")]
-        public IActionResult Login(LoginDto dto)
+        public async Task<IActionResult> Login(LoginDto dto)
         {
             if (dto is null || dto.Email.IsNullOrEmpty() || dto.Password.IsNullOrEmpty())
                 return BadRequest("Invalid client request");
 
-            var user = _userService.GetUserByEmail(dto.Email);
+            var user = await _userService.GetUserByEmailAsync(dto.Email);
 
             if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
                 return BadRequest(new { message = "Invalid credentials" });
@@ -74,7 +73,7 @@ namespace SmartShopping.Controllers
             user.RefreshToken = tokens.RefreshToken;
             user.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
 
-            _userService.UpdateUser(user);
+            await _userService.UpdateUserAsync(user);
 
             return Ok(new
             {
@@ -84,7 +83,7 @@ namespace SmartShopping.Controllers
         }
 
         [HttpPost("refresh")]
-        public IActionResult Refresh(TokenDto dto)
+        public async Task<IActionResult> Refresh(TokenDto dto)
         {
             if (dto is null || dto.AccessToken.IsNullOrEmpty() || dto.RefreshToken.IsNullOrEmpty())
                 return BadRequest("Invalid client request");
@@ -95,7 +94,7 @@ namespace SmartShopping.Controllers
             var email = _tokenService.GetEmailFromAccessToken(accessToken);
             if (email == null) return BadRequest("Invalid client request");
             
-            var user = _userService.GetUserByEmail(email);
+            var user = await _userService.GetUserByEmailAsync(email);
 
             if (user == null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
                 return BadRequest("Invalid client request");
@@ -104,7 +103,7 @@ namespace SmartShopping.Controllers
 
             user.RefreshToken = tokens.RefreshToken;
             user.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
-            _userService.UpdateUser(user);
+            await _userService.UpdateUserAsync(user);
 
             return Ok(new
             {
@@ -114,30 +113,44 @@ namespace SmartShopping.Controllers
         }
 
         [HttpPost("revoke"), Authorize]
-        public IActionResult Revoke()
+        public async Task<IActionResult> Revoke()
         {
             var email = User.FindFirst(ClaimTypes.Email)?.Value;
             if (email is null) return BadRequest();
 
-            var user = _userService.GetUserByEmail(email);
+            var user = await _userService.GetUserByEmailAsync(email);
             if (user == null) return BadRequest();
 
             user.RefreshToken = null;
-            _userService.UpdateUser(user);
+            await _userService.UpdateUserAsync(user);
 
             return NoContent();
         }
 
         [HttpGet("user"), Authorize]
-        public IActionResult GetUser()
+        public async Task<IActionResult> GetUser()
         {
             var email = User.FindFirst(ClaimTypes.Email)?.Value;
             if (email is null) return BadRequest();
 
-            var user = _userService.GetUserByEmail(email);
+            var user = await _userService.GetUserByEmailAsync(email);
             if (user == null) return BadRequest();
 
             return Ok(user);
+        }
+
+        [HttpDelete("deleteuser"), Authorize]
+        public async Task<IActionResult> DeleteUser()
+        {
+            var email = User.FindFirst(ClaimTypes.Email)?.Value;
+            if (email is null) return BadRequest();
+
+            var user = await _userService.GetUserByEmailAsync(email);
+            if (user == null) return BadRequest();
+
+            await _userService.DeleteUserAsync(user);
+
+            return Ok("success");
         }
     }
 }
