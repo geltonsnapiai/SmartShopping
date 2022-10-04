@@ -40,6 +40,7 @@ export const AppRoutes = [
     {
         path: '/groceries',
         element: <Groceries />,
+        auth: true
     },
     {
         path: '*',
