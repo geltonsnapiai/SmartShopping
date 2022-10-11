@@ -88,7 +88,7 @@ class AuthenticationService {
         
         if (response.status === 400) { // Bad request
             let body = await response.json();
-            return { ok: false, error: "Error from API" };
+            return { ok: false, error: body.detail, id: body.type };
         }
         else if (response.status !== 201) { // Other errors
             return { ok: false, error: null };

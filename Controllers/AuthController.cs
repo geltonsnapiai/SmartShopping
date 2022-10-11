@@ -31,9 +31,9 @@ namespace SmartShopping.Controllers
             if (dto is null)
                 return BadRequest("Invalid client request");
 
-            var (ok, errorMessage) = await _validationService.ValidateRegistrationAsync(dto);
+            var (ok, invalidField, errorMessage) = await _validationService.ValidateRegistrationAsync(dto);
             if (!ok) 
-                return ValidationProblem(errorMessage);
+                return ValidationProblem(detail:errorMessage, type : invalidField);
 
             var user = new User
             {

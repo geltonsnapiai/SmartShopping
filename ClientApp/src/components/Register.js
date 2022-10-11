@@ -32,6 +32,8 @@ function Register() {
         if (!input.password.match(/[a-z]/g) || !input.password.match(/[A-Z]/g)) return { ok: false, err: { id: "password", msg: "The password must include one lowercase and uppercase letter" } };
         if (!input.password.match(/[0-9]/g)) return { ok: false, err: { id: "password", msg: "The password must include a number" } };
 
+        if (!input.password.match(/[-+_!@#$%^&*.,?]/g)) return { ok: false, err: { id: "password", msg: "The password must include a special character" } };
+
         if (input.repeatPassword === "") return { ok: false, err: { id: "repeatPassword", msg: "Repeat password" } };
         if (input.password !== input.repeatPassword) return { ok: false, err: { id: "repeatPassword", msg: "Passwords don't match" } };
         return { ok: true };
@@ -90,7 +92,7 @@ function Register() {
                                         }
                                         else {
                                             console.error("Error: ", status.error);
-                                            setError({ id: null, msg: status.error});
+                                            setError({ id: status.id, msg: status.error});
                                         }
                                     });
                                 }

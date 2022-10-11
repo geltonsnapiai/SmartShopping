@@ -26,14 +26,14 @@ namespace SmartShopping.Services
             return true;
         }
 
-        public async Task<(bool Ok, string? ErrorMessage)> ValidateRegistrationAsync(RegisterDto dto)
+        public async Task<(bool Ok, string invalidField, string? ErrorMessage)> ValidateRegistrationAsync(RegisterDto dto)
         {
             string? errorMessage;
-            if (!ValidateUsername(dto.Name, out errorMessage)) return (false, errorMessage);
+            if (!ValidateUsername(dto.Name, out errorMessage)) return (false, "username", errorMessage);
             var (ok, err) = await ValidateEmailAsync(dto.Email);
-            if (!ok) return (false, err);
-            if (!ValidatePassword(dto.Password, out errorMessage)) return (false, errorMessage);
-            return (true, null);
+            if (!ok) return (false,"email", err);
+            if (!ValidatePassword(dto.Password, out errorMessage)) return (false, "password", errorMessage);
+            return (true, "", null);
         }
 
         public bool ValidateUsername(string username, out string? errorMessage)
