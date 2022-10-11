@@ -2,7 +2,7 @@ import { Counter } from "./components/Counter";
 import { PageNotFound } from "./components/PageNotFound";
 import { FetchData } from "./components/FetchData";
 import { Search } from "./components/Search";
-import { Groceries } from "./components/Groceries";
+import { Groceries } from "./components/Groceries/Groceries";
 import { Home } from "./components/Home";
 import { Navigate, Outlet } from 'react-router-dom';
 import { authenticationService } from "./components/auth/AuthenticationServce";
