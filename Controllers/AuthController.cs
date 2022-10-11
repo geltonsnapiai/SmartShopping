@@ -66,7 +66,7 @@ namespace SmartShopping.Controllers
             var user = await _userService.GetUserByEmailAsync(dto.Email);
 
             if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
-                return BadRequest(new { message = "Invalid credentials" });
+                return BadRequest(new { message = "Username or password is incorrect" });
 
             var tokens = _tokenService.GenerateTokens(user);
 
