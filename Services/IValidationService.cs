@@ -9,7 +9,7 @@ namespace SmartShopping.Services
         public bool ValidateEmail(string email, out string? errorMessage);
         public bool ValidatePassword(string password, out string? errorMessage);
 
-        public Task<(bool Ok, string? ErrorMessage)> ValidateRegistrationAsync(RegisterDto dto);
+        public Task<(bool Ok, string invalidField, string? ErrorMessage)> ValidateRegistrationAsync(RegisterDto dto);
         public Task<(bool Ok, string? ErrorMessage)> ValidateEmailAsync(string email);
     }
 }
