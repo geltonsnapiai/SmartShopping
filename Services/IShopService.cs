@@ -9,6 +9,6 @@ namespace SmartShopping.Services
          */
         public Task<Shop> AddShopAsync(string name);
 
-        public Task<List<Shop>> GetAllAsync();
+        public Task<ICollection<Shop>> GetAllAsync();
     }
 }

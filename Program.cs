@@ -13,12 +13,16 @@ Secrets.SecretKey = builder.Configuration["SecretKey"];
 
 // Add services to the container.
 builder.Services.AddCors();
-builder.Services.AddDbContext<DatabaseContext>(opt => opt.UseSqlServer(connectionString));
+builder.Services.AddDbContext<DatabaseContext>(opt => {
+    opt.UseLazyLoadingProxies()
+        .UseSqlServer(connectionString);
+});
 builder.Services.AddControllers();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IShopService, ShopService>();
+builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddTransient<IValidationService, ValidationService>();
 
 builder.Services.AddAuthentication(opt =>

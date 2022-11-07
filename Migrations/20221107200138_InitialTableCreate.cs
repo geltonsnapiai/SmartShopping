@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SmartShopping.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitialTableCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -24,14 +24,15 @@ namespace SmartShopping.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProductTag",
+                name: "ProductTags",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProductTag", x => x.Id);
+                    table.PrimaryKey("PK_ProductTags", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -64,28 +65,6 @@ namespace SmartShopping.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PriceRecord",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Store = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Price = table.Column<float>(type: "real", nullable: false),
-                    UploadDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CheckDate = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PriceRecord", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_PriceRecord_Products_ProductId",
-                        column: x => x.ProductId,
-                        principalTable: "Products",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "ProductProductTag",
                 columns: table => new
                 {
@@ -96,15 +75,43 @@ namespace SmartShopping.Migrations
                 {
                     table.PrimaryKey("PK_ProductProductTag", x => new { x.ProductsId, x.TagsId });
                     table.ForeignKey(
-                        name: "FK_ProductProductTag_ProductTag_TagsId",
+                        name: "FK_ProductProductTag_ProductTags_TagsId",
                         column: x => x.TagsId,
-                        principalTable: "ProductTag",
+                        principalTable: "ProductTags",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_ProductProductTag_Products_ProductsId",
                         column: x => x.ProductsId,
                         principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PriceRecords",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ShopId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Price = table.Column<float>(type: "real", nullable: false),
+                    UploadDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CheckDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PriceRecords", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PriceRecords_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PriceRecords_Shops_ShopId",
+                        column: x => x.ShopId,
+                        principalTable: "Shops",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -134,15 +141,20 @@ namespace SmartShopping.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_PriceRecord_Id",
-                table: "PriceRecord",
+                name: "IX_PriceRecords_Id",
+                table: "PriceRecords",
                 column: "Id",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_PriceRecord_ProductId",
-                table: "PriceRecord",
+                name: "IX_PriceRecords_ProductId",
+                table: "PriceRecords",
                 column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PriceRecords_ShopId",
+                table: "PriceRecords",
+                column: "ShopId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductProductTag_TagsId",
@@ -161,8 +173,8 @@ namespace SmartShopping.Migrations
                 column: "ShopsId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductTag_Id",
-                table: "ProductTag",
+                name: "IX_ProductTags_Id",
+                table: "ProductTags",
                 column: "Id",
                 unique: true);
 
@@ -189,7 +201,7 @@ namespace SmartShopping.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "PriceRecord");
+                name: "PriceRecords");
 
             migrationBuilder.DropTable(
                 name: "ProductProductTag");
@@ -201,7 +213,7 @@ namespace SmartShopping.Migrations
                 name: "Users");
 
             migrationBuilder.DropTable(
-                name: "ProductTag");
+                name: "ProductTags");
 
             migrationBuilder.DropTable(
                 name: "Products");

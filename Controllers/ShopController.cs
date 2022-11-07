@@ -25,7 +25,7 @@ namespace SmartShopping.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            List<Shop> shops = await _shopService.GetAllAsync();
+            ICollection<Shop> shops = await _shopService.GetAllAsync();
             return Ok(shops);
         }
     }

@@ -32,7 +32,7 @@ namespace SmartShopping.Services
             return shop;
         }
 
-        public async Task<List<Shop>> GetAllAsync()
+        public async Task<ICollection<Shop>> GetAllAsync()
         {
             return await _databaseContext.Shops.ToListAsync();
         }

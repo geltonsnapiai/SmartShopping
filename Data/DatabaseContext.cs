@@ -12,6 +12,8 @@ namespace SmartShopping.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Shop> Shops { get; set; }
+        public DbSet<PriceRecord> PriceRecords { get; set; }
+        public DbSet<ProductTag> ProductTags { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -27,12 +29,19 @@ namespace SmartShopping.Data
             });
             builder.Entity<PriceRecord>(entity => {
                 entity.HasIndex(e => e.Id).IsUnique();
+                entity.HasOne(e => e.Shop).WithMany();
+
+                entity.HasOne(e => e.Product).WithMany(e => e.PriceRecords);
             });
             builder.Entity<ProductTag>(entity => {
                 entity.HasIndex(e => e.Id).IsUnique();
+
+                entity.HasMany(e => e.Products).WithMany(e => e.Tags);
             });
             builder.Entity<Shop>(entity => {
                 entity.HasIndex(e => e.Id).IsUnique();
+
+                entity.HasMany(e => e.Products).WithMany(e => e.Shops);
             });
         }
     }

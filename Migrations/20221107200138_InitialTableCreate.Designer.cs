@@ -12,8 +12,8 @@ using SmartShopping.Data;
 namespace SmartShopping.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20221107155545_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20221107200138_InitialTableCreate")]
+    partial class InitialTableCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -70,9 +70,8 @@ namespace SmartShopping.Migrations
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Store")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("ShopId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("UploadDate")
                         .HasColumnType("datetime2");
@@ -84,7 +83,9 @@ namespace SmartShopping.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("PriceRecord");
+                    b.HasIndex("ShopId");
+
+                    b.ToTable("PriceRecords");
                 });
 
             modelBuilder.Entity("SmartShopping.Models.Product", b =>
@@ -111,12 +112,16 @@ namespace SmartShopping.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Id")
                         .IsUnique();
 
-                    b.ToTable("ProductTag");
+                    b.ToTable("ProductTags");
                 });
 
             modelBuilder.Entity("SmartShopping.Models.Shop", b =>
@@ -214,7 +219,15 @@ namespace SmartShopping.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("SmartShopping.Models.Shop", "Shop")
+                        .WithMany()
+                        .HasForeignKey("ShopId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Product");
+
+                    b.Navigation("Shop");
                 });
 
             modelBuilder.Entity("SmartShopping.Models.Product", b =>
