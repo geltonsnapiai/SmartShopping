@@ -31,9 +31,9 @@ namespace SmartShopping.Controllers
             if (dto is null)
                 return BadRequest("Invalid client request");
 
-            var (ok, errorMessage) = await _validationService.ValidateRegistrationAsync(dto);
+            var (ok, invalidField, errorMessage) = await _validationService.ValidateRegistrationAsync(dto);
             if (!ok) 
-                return ValidationProblem(errorMessage);
+                return ValidationProblem(detail:errorMessage, type : invalidField);
 
             var user = new User
             {
@@ -66,7 +66,7 @@ namespace SmartShopping.Controllers
             var user = await _userService.GetUserByEmailAsync(dto.Email);
 
             if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
-                return BadRequest(new { message = "Invalid credentials" });
+                return BadRequest(new { message = "Username or password is incorrect" });
 
             var tokens = _tokenService.GenerateTokens(user);
 

@@ -47,6 +47,9 @@ function Login() {
                                 <Input type="password" className="form-control" placeholder="Password" id="password"/>
                                 <Label>Password</Label>
                             </div>
+                            {(error !== null && error.id === "loginError") &&
+                                <div className="text-end" style={{ color: "var(--primary)" }}><p>{error.msg}</p></div>}
+
                             {/* TODO: Implement remember me.
                                 <div className="d-flex align-items-center justify-content-between mb-4">
                                 <div className="form-check">
@@ -70,7 +73,7 @@ function Login() {
                                         }
                                         else {
                                             console.error("Error: ", status.error);
-                                            setError({ id: null, msg: status.error});
+                                            setError({ id: "loginError", msg: status.error});
                                         }
                                     });
                                 }

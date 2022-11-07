@@ -84,6 +84,9 @@ export class SideBar extends Component {
                                 Groceries
                             </NavLink>
                         </NavItem>
+                        <NavItem>
+                            <NavLink tag={RRNavLink} to="/search"><i className="fa fa-search me-2"/>Search</NavLink>
+                        </NavItem>
                     </div>
                 </Navbar>
             </div>
