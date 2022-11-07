@@ -6,9 +6,9 @@ namespace SmartShopping.Services
 {
     public class UserService : IUserService
     {
-        private readonly UserContext _context;
+        private readonly DatabaseContext _context;
 
-        public UserService(UserContext context)
+        public UserService(DatabaseContext context)
         {
             _context = context;
         }
