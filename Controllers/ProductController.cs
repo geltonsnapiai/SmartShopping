@@ -43,18 +43,34 @@ namespace SmartShopping.Controllers
          *      if shop parameter specified
          */
         [HttpGet]
-        public async Task<IActionResult> Get(string shop)
+        public async Task<IActionResult> Get(string? shop, string? search)
         {
             try
             {
-                if (!string.IsNullOrEmpty(shop))
+                if (!string.IsNullOrEmpty(search) && !string.IsNullOrEmpty(shop))
                 {
-                    ICollection<ShopProductData> products = await _productService.GetProductDataByShopNameAsync(shop);
+                    ICollection<ProductData> products = await _productService.SearchShopProductsAsync(shop, search);
 
                     return Ok(products);
                 }
+                else if (!string.IsNullOrEmpty(shop))
+                {
+                    ICollection<ProductData> products = await _productService.GetShopProductsAsync(shop);
 
-                return BadRequest("Specify shop name");
+                    return Ok(products);
+                }
+                else if (!string.IsNullOrEmpty(search))
+                {
+                    ICollection<ProductData> products = await _productService.SearchProductsAsync(search);
+
+                    return Ok(products);
+                }
+                else
+                {
+                    ICollection<ProductData> products = await _productService.GetAllProductsAsync();
+
+                    return Ok(products);
+                }
             } catch (Exception e)
             {
                 return BadRequest(e.Message);

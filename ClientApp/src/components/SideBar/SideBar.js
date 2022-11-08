@@ -8,7 +8,7 @@ import {
     NavLink,
 } from "reactstrap";
 import { NavLink as RRNavLink, Link } from "react-router-dom";
-import { authFetch } from './auth/AuthFetch';
+import { authFetch } from '../../auth/AuthFetch';
 
 export class SideBar extends Component {
     constructor(props) {
@@ -30,9 +30,7 @@ export class SideBar extends Component {
 
     render() {
         return (
-            <div
-                className={`sidebar pe-4 pb-3 ${this.props.open ? "open" : ""}`}
-            >
+            <div className={`sidebar pe-4 pb-3 ${this.props.open ? "open" : ""}`} >
                 <Navbar className="navbar bg-secondary navbar-dark">
                     <NavbarBrand
                         className="navbar-brand mx-4 mb-3"
@@ -60,32 +58,23 @@ export class SideBar extends Component {
                         )
                     }
                     <div className="navbar-nav w-100">
-                        <NavItem>
+                        <NavItem className="w-100">
                             <NavLink tag={RRNavLink} to="/">
                                 <i className="fa fa-home me-2" />
                                 Home
                             </NavLink>
                         </NavItem>
-                        <NavItem>
-                            <NavLink tag={RRNavLink} to="/counter">
-                                <i className="fa fa-calculator me-2" />
-                                Counter
-                            </NavLink>
-                        </NavItem>
-                        <NavItem>
-                            <NavLink tag={RRNavLink} to="/fetch-data">
-                                <i className="fa fa-cloud me-2" />
-                                Fetch data
-                            </NavLink>
-                        </NavItem>
-                        <NavItem>
+                        <NavItem className="w-100">
                             <NavLink tag={RRNavLink} to="/groceries">
                                 <i className="fa fa-shopping-bag me-2" />
                                 Groceries
                             </NavLink>
                         </NavItem>
-                        <NavItem>
-                            <NavLink tag={RRNavLink} to="/search"><i className="fa fa-search me-2"/>Search</NavLink>
+                        <NavItem className="w-100">
+                            <NavLink tag={RRNavLink} to="/search">
+                                <i className="fa fa-search me-2"/>
+                                Search
+                            </NavLink>
                         </NavItem>
                     </div>
                 </Navbar>

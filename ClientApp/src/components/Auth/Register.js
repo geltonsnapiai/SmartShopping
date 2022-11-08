@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { Button, Input, Label } from "reactstrap";
-import { authenticationService } from './auth/AuthenticationServce';
-import { NamedLogo } from "./NamedLogo";
+import { authenticationService } from '../../auth/AuthenticationServce';
+import { NamedLogo } from "../NamedLogo";
 
 function Register() {
     const userLoggedIn = authenticationService.userIsLoggedIn();

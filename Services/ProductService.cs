@@ -79,39 +79,84 @@ namespace SmartShopping.Services
             await _databaseContext.SaveChangesAsync();
         }
 
-        public async Task<ICollection<ShopProductData>> GetProductDataByShopNameAsync(string name)
+        public async Task<ICollection<ProductData>> GetAllProductsAsync()
         {
-            ICollection<Product> products = await GetProductsByShopNameAsync(name);
-            List<ShopProductData> productData = new List<ShopProductData>();
-            foreach (var product in products)
+            var products = await _databaseContext.Products.ToListAsync();
+            return products.Select(e => new ProductData
             {
-                List<string> tags = new List<string>();
-                foreach (var tag in product.Tags)
-                    tags.Add(tag.Title);
+                Id = e.Id,
+                Name = e.Name,
+                Tags = e.Tags.Select(t => t.Title).ToArray(),
+                Shops = e.Shops.Select(s => s.Name).ToArray(),
+                Price = e.PriceRecords.MaxBy(r => r.CheckDate).Price,
+                TimeUpdated = e.PriceRecords.MaxBy(r => r.CheckDate).CheckDate
+            })
+                .ToList();
+        }
 
+        public async Task<ICollection<ProductData>> GetShopProductsAsync(string shopName)
+        {
+            Shop shop = await _databaseContext.Shops.FirstOrDefaultAsync(e => e.Name.Equals(shopName));
+
+            if (shop is null)
+                throw new Exception("No record of shop '" + shopName + "' exits");
+
+            List<ProductData> productData = new List<ProductData>();
+            foreach (var product in shop.Products)
+            {
                 PriceRecord? record = product.PriceRecords.MaxBy(record => record.CheckDate);
 
-                productData.Add(new ShopProductData
+                productData.Add(new ProductData
                 {
                     Id = product.Id,
                     Name = product.Name,
-                    Tags = tags.ToArray(),
+                    Tags = product.Tags.Select(t => t.Title).ToArray(),
                     Price = record is null ? float.NaN : record.Price,
-                    TimeUpdated = record is null ? DateTime.MinValue : record.CheckDate
+                    TimeUpdated = record is null ? DateTime.MinValue : record.CheckDate,
+                    Shops = product.Shops.Select(s => s.Name).ToArray()
                 });
             }
 
             return productData;
         }
 
-        public async Task<ICollection<Product>> GetProductsByShopNameAsync(string name)
+        public async Task<ICollection<ProductData>> SearchProductsAsync(string searchQuery)
         {
-            Shop shop = await _databaseContext.Shops.FirstOrDefaultAsync(e => e.Name.Equals(name));
+            var products = await _databaseContext.Products.Where(p => p.Name.Contains(searchQuery)).ToListAsync();
+
+            return products.Select(e => new ProductData
+            {
+                Id = e.Id,
+                Name = e.Name,
+                Tags = e.Tags.Select(t => t.Title).ToArray(),
+                Shops = e.Shops.Select(s => s.Name).ToArray(),
+                Price = e.PriceRecords.MaxBy(r => r.CheckDate).Price,
+                TimeUpdated = e.PriceRecords.MaxBy(r => r.CheckDate).CheckDate
+            })
+                .ToList();
+        }
+
+        public async Task<ICollection<ProductData>> SearchShopProductsAsync(string shopName, string searchQuery)
+        {
+            Shop shop = await _databaseContext.Shops.FirstOrDefaultAsync(e => e.Name.Equals(shopName));
 
             if (shop is null)
-                throw new Exception("No record of shop '" + name + "' exits");
+                throw new Exception("No record of shop '" + shopName + "' exits");
 
-            return shop.Products;
+            var products = await _databaseContext.Products.Where(p => p.Name.Contains(searchQuery))
+                .Where(p => p.Shops.Contains(shop))
+                .ToListAsync();
+
+            return products.Select(e => new ProductData
+            {
+                Id = e.Id,
+                Name = e.Name,
+                Tags = e.Tags.Select(t => t.Title).ToArray(),
+                Shops = e.Shops.Select(s => s.Name).ToArray(),
+                Price = e.PriceRecords.MaxBy(r => r.CheckDate).Price,
+                TimeUpdated = e.PriceRecords.MaxBy(r => r.CheckDate).CheckDate
+            })
+                .ToList();
         }
     }
 }

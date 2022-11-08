@@ -7,8 +7,12 @@ namespace SmartShopping.Services
     {
         public Task AddRecordAsync(ProductDto product);
 
-        public Task<ICollection<Product>> GetProductsByShopNameAsync(string name);
+        public Task<ICollection<ProductData>> GetAllProductsAsync();
+        
+        public Task<ICollection<ProductData>> GetShopProductsAsync(string shopName);
 
-        public Task<ICollection<ShopProductData>> GetProductDataByShopNameAsync(string name);
+        public Task<ICollection<ProductData>> SearchProductsAsync(string searchQuery);
+
+        public Task<ICollection<ProductData>> SearchShopProductsAsync(string shop, string searchQuery);
     }
 }
