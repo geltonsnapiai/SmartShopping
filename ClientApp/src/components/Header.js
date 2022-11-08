@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import { authenticationService } from '../auth/AuthenticationServce';
 import { useNavigate } from 'react-router-dom';
 import { NamedLogo } from './NamedLogo';
+import { ProfileButton } from './ProfileButton';
+import { authFetch } from '../auth/AuthFetch';
 
 const withNavigate = (Component) => {
     return (props) => {
@@ -21,6 +23,16 @@ class Header extends Component {
         this.toggleCallback = props.toggleCallback;
     }
 
+    componentDidMount() {
+        authFetch('api/auth/user')
+            .then(response => response.json())
+            .then(user => this.populateUser(user));
+    }
+
+    populateUser(user) {
+        this.setState({ user: user });
+    }
+
     render() {
         if (authenticationService.userIsLoggedIn()) {
             return (
@@ -31,9 +43,9 @@ class Header extends Component {
                         <NavbarBrand className="navbar-brand d-flex d-lg-none me-4" tag={Link} to="/">
                             <h2 className="text-primary mb-0"><NamedLogo/></h2>
                         </NavbarBrand>
-                    <Button color="primary" className="m-2" onClick={() => authenticationService.logout()}>
-                        Log out
-                    </Button>
+                        <div className="navbar-nav allign-items-center ms-auto">
+                            <ProfileButton userName={this.state.user.name}/>
+                        </div>
                 </Navbar>
             );
         }
