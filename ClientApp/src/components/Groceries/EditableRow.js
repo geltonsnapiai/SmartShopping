@@ -1,7 +1,7 @@
 import React from 'react'
 import { Input } from "reactstrap";
 
-const EditableRow = ({handleCancelClick, editFormData, handleEditFormChange}) => {
+const EditableRow = ({handleCancelClick, editFormData, handleEditFormChange, shops}) => {
   return (
     <tr>
 
@@ -15,11 +15,7 @@ const EditableRow = ({handleCancelClick, editFormData, handleEditFormChange}) =>
                 onChange={handleEditFormChange}
             >
                 <option></option>
-                <option>Iki</option>
-                <option>Lidl</option>
-                <option>Maxima</option>
-                <option>Norfa</option>
-                <option>Rimi</option>
+                {shops.map(e => <option key={e.id}>{e.name}</option>)}
             </select>
         </td>
 

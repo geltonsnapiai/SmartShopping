@@ -195,7 +195,7 @@ export function Groceries() {
                             {groceries.map((data) => (
                                 <Fragment>
                                     {editGroceryId === data.id ? (<EditableRow handleCancelClick={handleCancelClick} 
-                                    editFormData={editFormData} handleEditFormChange={handleEditFormChange} />
+                                    editFormData={editFormData} shops={shops} handleEditFormChange={handleEditFormChange} />
                                     ) : (
                                     <ReadOnlyRow data={data} handleEditClick={handleEditClick} handleDeleteClick={handleDeleteGrocery}/>)}
                                 </Fragment>    
