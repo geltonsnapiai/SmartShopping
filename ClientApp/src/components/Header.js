@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Button, Collapse, Navbar, NavbarBrand, NavbarToggler } from 'reactstrap';
 import { Link } from 'react-router-dom';
-import { authenticationService } from './auth/AuthenticationServce';
+import { authenticationService } from '../auth/AuthenticationServce';
 import { useNavigate } from 'react-router-dom';
 import { NamedLogo } from './NamedLogo';
 
@@ -24,7 +24,7 @@ class Header extends Component {
     render() {
         if (authenticationService.userIsLoggedIn()) {
             return (
-                <Navbar className="navbar-expand bg-secondary navbar-dark sticky-top px-4 py-0">
+                <Navbar className="navbar-expand bg-secondary navbar-dark sticky-top px-4 py-2">
                         <NavbarToggler className="sidebar-toggler flex-shrink-0" style={{color: "var(--primary)"}} tag="a" onClick={this.toggleCallback}>
                             <i className="fa fa-bars"></i>
                         </NavbarToggler>
@@ -39,7 +39,7 @@ class Header extends Component {
         }
         else {
             return (
-                <Navbar className="navbar-expand bg-secondary navbar-dark sticky-top px-4 py-0">
+                <Navbar className="navbar-expand bg-secondary navbar-dark sticky-top px-4 py-2">
                     <NavbarBrand className="navbar-brand d-flex me-4" tag={Link} to="/">
                         <h2 className="text-primary mb-0"><NamedLogo/></h2>
                     </NavbarBrand>

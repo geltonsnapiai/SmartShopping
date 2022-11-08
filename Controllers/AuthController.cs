@@ -26,11 +26,8 @@ namespace SmartShopping.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register(RegisterDto dto)
+        public async Task<IActionResult> Register([FromBody] RegisterDto dto)
         {
-            if (dto is null)
-                return BadRequest("Invalid client request");
-
             var (ok, invalidField, errorMessage) = await _validationService.ValidateRegistrationAsync(dto);
             if (!ok) 
                 return ValidationProblem(detail:errorMessage, type : invalidField);
@@ -58,9 +55,9 @@ namespace SmartShopping.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginDto dto)
+        public async Task<IActionResult> Login([FromBody] LoginDto dto)
         {
-            if (dto is null || dto.Email.IsNullOrEmpty() || dto.Password.IsNullOrEmpty())
+            if (string.IsNullOrEmpty(dto.Email) || string.IsNullOrEmpty(dto.Password))
                 return BadRequest("Invalid client request");
 
             var user = await _userService.GetUserByEmailAsync(dto.Email);
@@ -83,9 +80,9 @@ namespace SmartShopping.Controllers
         }
 
         [HttpPost("refresh")]
-        public async Task<IActionResult> Refresh(TokenDto dto)
+        public async Task<IActionResult> Refresh([FromBody] TokenDto dto)
         {
-            if (dto is null || dto.AccessToken.IsNullOrEmpty() || dto.RefreshToken.IsNullOrEmpty())
+            if (string.IsNullOrEmpty(dto.AccessToken) || string.IsNullOrEmpty(dto.RefreshToken))
                 return BadRequest("Invalid client request");
 
             string accessToken = dto.AccessToken;

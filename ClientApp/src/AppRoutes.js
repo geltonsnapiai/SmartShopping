@@ -1,13 +1,11 @@
-import { Counter } from "./components/Counter";
 import { PageNotFound } from "./components/PageNotFound";
-import { FetchData } from "./components/FetchData";
-import { Search } from "./components/Search";
+import { Search } from "./components/Search/Search";
 import { Groceries } from "./components/Groceries/Groceries";
-import { Home } from "./components/Home";
+import { Home } from "./components/Home/Home";
 import { Navigate, Outlet } from 'react-router-dom';
-import { authenticationService } from "./components/auth/AuthenticationServce";
-import Login from "./components/Login";
-import Register from "./components/Register";
+import { authenticationService } from "./auth/AuthenticationServce";
+import Login from "./components/Auth/Login";
+import Register from "./components/Auth/Register";
 
 export const AppRoutes = [
     {
@@ -21,16 +19,6 @@ export const AppRoutes = [
     {
         path: '/register',
         element: <Register />
-    },
-    {
-        path: '/counter',
-        element: <Counter />,
-        auth: true
-    },
-    {
-        path: '/fetch-data',
-        element: <FetchData />,
-        auth: true
     },
     {
         path: '/search',

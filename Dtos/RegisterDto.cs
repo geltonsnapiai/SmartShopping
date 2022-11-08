@@ -1,6 +1,6 @@
 ﻿namespace SmartShopping.Dtos
 {
-    public class RegisterDto
+    public struct RegisterDto
     {
         public string Name { get; set; }
         public string Email { get; set; }
