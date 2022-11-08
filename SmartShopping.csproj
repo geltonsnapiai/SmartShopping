@@ -24,14 +24,26 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="7.0.0-rc.1.22426.7" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.0-rc.1.22426.7" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.10">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.23.1" />
   </ItemGroup>
 
   <ItemGroup>
     <!-- Don't publish the SPA source files, but do show them in the project files list -->
+    <Compile Remove="SmartShopping.Tests\**" />
+    <Compile Remove="Tests\**" />
     <Content Remove="$(SpaRoot)**" />
-    <None Remove="$(SpaRoot)**" />
+    <Content Remove="SmartShopping.Tests\**" />
+    <Content Remove="Tests\**" />
+    <EmbeddedResource Remove="SmartShopping.Tests\**" />
+    <EmbeddedResource Remove="Tests\**" />
+    <None Remove="SmartShopping.Tests\**" />
+    <None Remove="Tests\**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
   </ItemGroup>
 

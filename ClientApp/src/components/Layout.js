@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { Container } from 'reactstrap';
 import Header from './Header';
-import { SideBar } from './SideBar';
-import { authenticationService } from './auth/AuthenticationServce';
+import { SideBar } from './SideBar/SideBar';
+import { authenticationService } from '../auth/AuthenticationServce';
 import { useLocation } from 'react-router-dom';
+import { Footer } from './Footer';
 
 const withLocation = (Component) => {
     return (props) => {
@@ -20,8 +21,8 @@ class Layout extends Component {
         this.state = { open: false, user: authenticationService.userIsLoggedIn()};
         this.toggleSidebar = this.toggleSidebar.bind(this);
 
-        authenticationService.setLoggedInCallback(() => this.setState({user: true}));
-        authenticationService.setLoggedOutCallback(() => this.setState({user: false}));
+        authenticationService.addLoggedInCallback(() => this.setState({user: true}));
+        authenticationService.addLoggedOutCallback(() => this.setState({user: false}));
     }
 
     toggleSidebar() {
@@ -36,9 +37,10 @@ class Layout extends Component {
                     <SideBar open={this.state.open}/>
                     <div className={`content ${this.state.open ? "open" : ""}`}>
                         <Header user="true" toggleCallback={this.toggleSidebar}/>
-                        <Container className="container-fuild pt-4 px-4">
+                        <div style={{minHeight: "100vh"}}>
                             {this.props.children}
-                        </Container>
+                        </div>
+                        <Footer/>
                     </div>
                 </>
             );
@@ -55,9 +57,8 @@ class Layout extends Component {
                 <>
                     <div className="content open">
                         <Header user="false"/>
-                        <Container className="container-fuild pt-4 px-4">
-                            {this.props.children}
-                        </Container>
+                        {this.props.children}
+                        <Footer/>
                     </div>
                 </>
             );

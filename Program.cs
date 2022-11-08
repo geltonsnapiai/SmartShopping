@@ -13,11 +13,17 @@ Secrets.SecretKey = builder.Configuration["SecretKey"];
 
 // Add services to the container.
 builder.Services.AddCors();
-builder.Services.AddDbContext<UserContext>(opt => opt.UseSqlServer(connectionString));
+builder.Services.AddDbContext<DatabaseContext>(opt => {
+    opt.UseLazyLoadingProxies()
+        .UseSqlServer(connectionString);
+});
 builder.Services.AddControllers();
 
-builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IShopService, ShopService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddTransient<IValidationService, ValidationService>();
 
 builder.Services.AddAuthentication(opt =>
 {
@@ -34,7 +40,9 @@ builder.Services.AddAuthentication(opt =>
         ValidateIssuerSigningKey = true,
         ValidIssuer = "https://localhost:7100",
         ValidAudience = "https://localhost:7100",
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Secrets.SecretKey))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Secrets.SecretKey)),
+        // TODO: remove for deployment. This is only for debugging purposes.
+        ClockSkew = TimeSpan.Zero
     };
 });
 
@@ -49,7 +57,6 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseCors(options => options
-    //.WithOrigins(new[] { "http:/localhost:44433" })
     .AllowAnyOrigin()
     .AllowAnyHeader()
     .AllowAnyMethod()
