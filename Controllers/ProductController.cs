@@ -49,29 +49,42 @@ namespace SmartShopping.Controllers
             {
                 if (!string.IsNullOrEmpty(search) && !string.IsNullOrEmpty(shop))
                 {
-                    ICollection<ProductData> products = await _productService.SearchShopProductsAsync(shop, search);
+                    ICollection<ProductDataDto> products = await _productService.SearchShopProductsAsync(shop, search);
 
                     return Ok(products);
                 }
                 else if (!string.IsNullOrEmpty(shop))
                 {
-                    ICollection<ProductData> products = await _productService.GetShopProductsAsync(shop);
+                    ICollection<ProductDataDto> products = await _productService.GetShopProductsAsync(shop);
 
                     return Ok(products);
                 }
                 else if (!string.IsNullOrEmpty(search))
                 {
-                    ICollection<ProductData> products = await _productService.SearchProductsAsync(search);
+                    ICollection<ProductDataDto> products = await _productService.SearchProductsAsync(search);
 
                     return Ok(products);
                 }
                 else
                 {
-                    ICollection<ProductData> products = await _productService.GetAllProductsAsync();
+                    ICollection<ProductDataDto> products = await _productService.GetAllProductsAsync();
 
                     return Ok(products);
                 }
             } catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpGet("{id}/records", Name = "GetAllProductRecord")]
+        public async Task<IActionResult> GetAllProductRecord([FromRoute] string id)
+        {
+            try
+            {
+                return Ok(await _productService.GetProductPriceRecordsAsync(Guid.Parse(id)));
+            }
+            catch (Exception e)
             {
                 return BadRequest(e.Message);
             }

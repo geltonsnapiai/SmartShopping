@@ -1,4 +1,5 @@
-﻿using SmartShopping.Models;
+﻿using SmartShopping.Dtos;
+using SmartShopping.Models;
 
 namespace SmartShopping.Services
 {
@@ -7,8 +8,8 @@ namespace SmartShopping.Services
         /*
          * Returns shop created or one exists returns it
          */
-        public Task<Shop> AddShopAsync(string name);
+        public Task<ShopDto> AddShopAsync(string name);
 
-        public Task<ICollection<Shop>> GetAllAsync();
+        public Task<ICollection<ShopDto>> GetAllAsync();
     }
 }

@@ -1,5 +1,6 @@
 ﻿using SmartShopping.Dtos;
 using SmartShopping.Models;
+using System.Collections;
 
 namespace SmartShopping.Services
 {
@@ -7,12 +8,16 @@ namespace SmartShopping.Services
     {
         public Task AddRecordAsync(ProductDto product);
 
-        public Task<ICollection<ProductData>> GetAllProductsAsync();
+        public Task<ICollection<ProductDataDto>> GetAllProductsAsync();
         
-        public Task<ICollection<ProductData>> GetShopProductsAsync(string shopName);
+        public Task<ICollection<ProductDataDto>> GetShopProductsAsync(string shopName);
 
-        public Task<ICollection<ProductData>> SearchProductsAsync(string searchQuery);
+        public Task<ICollection<ProductDataDto>> SearchProductsAsync(string searchQuery);
 
-        public Task<ICollection<ProductData>> SearchShopProductsAsync(string shop, string searchQuery);
+        public Task<ICollection<ProductDataDto>> SearchShopProductsAsync(string shop, string searchQuery);
+
+        public Task<ICollection<PriceRecordDto>> GetProductPriceRecordsAsync(Guid id);
+
+        public Task<ICollection<PriceRecordDto>> GetShopProductPriceRecordsAsync(Guid id, string shop);
     }
 }

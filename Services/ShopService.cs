@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SmartShopping.Data;
+using SmartShopping.Dtos;
 using SmartShopping.Models;
 
 namespace SmartShopping.Services
@@ -13,12 +14,12 @@ namespace SmartShopping.Services
             this._databaseContext = databaseContext;
         }
 
-        public async Task<Shop> AddShopAsync(string name)
+        public async Task<ShopDto> AddShopAsync(string name)
         {
             Shop? shop = await _databaseContext.Shops.FirstOrDefaultAsync(e => e.Name.Equals(name));
 
             if (shop is not null)
-                return shop;
+                return shop.ToDto();
 
             shop = new Shop()
             {
@@ -29,12 +30,12 @@ namespace SmartShopping.Services
             _databaseContext.Shops.Add(shop);
             await _databaseContext.SaveChangesAsync();
 
-            return shop;
+            return shop.ToDto();
         }
 
-        public async Task<ICollection<Shop>> GetAllAsync()
+        public async Task<ICollection<ShopDto>> GetAllAsync()
         {
-            return await _databaseContext.Shops.ToListAsync();
+            return await _databaseContext.Shops.Select(e => e.ToDto()).ToListAsync();
         }
     }
 }

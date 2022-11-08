@@ -2,7 +2,7 @@
 
 namespace SmartShopping.Models
 {
-    public class Shop
+    public class Shop : IEquatable<Shop>
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
@@ -11,6 +11,12 @@ namespace SmartShopping.Models
         public Shop()
         {
             Products = new List<Product>();
+        }
+
+        public bool Equals(Shop? other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            return other.Id == Id;
         }
     }
 }

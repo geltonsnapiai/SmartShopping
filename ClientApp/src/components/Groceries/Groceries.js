@@ -1,11 +1,13 @@
-﻿import React from "react";
+﻿import React, { useEffect } from "react";
 import { Input, Table, Form, Button } from "reactstrap";
 import { nanoid } from "nanoid";
 import { useState, Fragment } from "react";
 import ReadOnlyRow from "./ReadOnlyRow";
 import EditableRow from "./EditableRow";
+import { authFetch } from "../../auth/AuthFetch";
 
 export function Groceries() {
+    const [shops, setShops] = useState([]);
     const [groceries, setGroceries] = useState([]);
 
     const [addFormData, setAddFormData] = useState({
@@ -109,7 +111,36 @@ export function Groceries() {
 
     const handleCancelClick = () => {
         setEditGroceryId(null);
-      };
+    }
+
+    const submitData = () => {
+        const data = groceries.map(g => {
+            return {
+                name: g.item,
+                tags: [],
+                price: g.price,
+                shop: g.store,
+                dateOfPurchase: g.date + "T00:00:00.000Z"
+            }
+        });
+
+        console.log("Submiting: ", data);
+
+        authFetch("/api/product/submit", { 
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            }, 
+            body: JSON.stringify(data)
+        })
+            .then(setGroceries([]));
+    }
+
+    useEffect(() => {
+        authFetch("/api/shop")
+            .then(response => response.json())
+            .then(setShops);
+    }, []);
 
     return (
         <div className="container-fluid pt-4 px-4">
@@ -123,11 +154,7 @@ export function Groceries() {
                         onChange={handleAddFormChange}
                     >
                         <option></option>
-                        <option>Iki</option>
-                        <option>Lidl</option>
-                        <option>Maxima</option>
-                        <option>Norfa</option>
-                        <option>Rimi</option>
+                        {shops.map(e => <option key={e.id}>{e.name}</option>)}
                     </select>
                     <label style={{marginTop:"8px"}}>Item Name</label>
                     <Input
@@ -151,7 +178,7 @@ export function Groceries() {
                         name="date"
                         onChange={handleAddFormChange}
                     />
-                    <Button color="primary" style={{marginTop:"11px"}}>Save</Button>
+                    <Button color="primary" style={{marginTop:"11px"}}>Add</Button>
                 </Form>
 
                 <Form onSubmit = {handleEditClickSubmit}>
@@ -176,6 +203,7 @@ export function Groceries() {
                         </tbody>
                     </Table>
                 </Form>
+                { groceries.length != 0 && <Button color="primary" className="m-2" onClick={submitData}>Submit</Button> }
             </div>
         </div>
     );

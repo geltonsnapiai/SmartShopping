@@ -1,6 +1,6 @@
 ﻿namespace SmartShopping.Dtos
 {
-    public class TokenDto
+    public struct TokenDto
     {
         public string? AccessToken { get; set; }
         public string? RefreshToken { get; set; }

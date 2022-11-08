@@ -2,7 +2,7 @@
 
 namespace SmartShopping.Dtos
 {
-    public class ProductDto
+    public struct ProductDto
     {
         public string Name { get; set; }
         public string[] Tags { get; set; }

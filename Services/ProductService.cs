@@ -79,64 +79,76 @@ namespace SmartShopping.Services
             await _databaseContext.SaveChangesAsync();
         }
 
-        public async Task<ICollection<ProductData>> GetAllProductsAsync()
+        public async Task<ICollection<ProductDataDto>> GetAllProductsAsync()
         {
             var products = await _databaseContext.Products.ToListAsync();
-            return products.Select(e => new ProductData
-            {
-                Id = e.Id,
-                Name = e.Name,
-                Tags = e.Tags.Select(t => t.Title).ToArray(),
-                Shops = e.Shops.Select(s => s.Name).ToArray(),
-                Price = e.PriceRecords.MaxBy(r => r.CheckDate).Price,
-                TimeUpdated = e.PriceRecords.MaxBy(r => r.CheckDate).CheckDate
-            })
+            return products.Select(product => new ProductDataDto(
+                product.Id,
+                product.Name,
+                product.Tags.Select(t => t.Title).ToArray(),
+                product.Shops.Select(s => {
+                    return new PriceRecordDto(product.PriceRecords.Where(r => r.Shop.Equals(s))
+                        .MaxBy(r => r.CheckDate));
+                }).ToArray()
+            ))
                 .ToList();
         }
 
-        public async Task<ICollection<ProductData>> GetShopProductsAsync(string shopName)
+        public async Task<ICollection<PriceRecordDto>> GetProductPriceRecordsAsync(Guid id)
+        {
+            Product? product = await _databaseContext.Products.FirstOrDefaultAsync(product => product.Id.Equals(id));
+            
+            if (product is null)
+                throw new Exception("Product with id: " + id.ToString() + " does not exist.");
+
+            return product.PriceRecords.Select(e => e.ToDto()).ToList();
+        }
+
+        public Task<ICollection<PriceRecordDto>> GetShopProductPriceRecordsAsync(Guid id, string shop)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<ICollection<ProductDataDto>> GetShopProductsAsync(string shopName)
         {
             Shop shop = await _databaseContext.Shops.FirstOrDefaultAsync(e => e.Name.Equals(shopName));
 
             if (shop is null)
                 throw new Exception("No record of shop '" + shopName + "' exits");
 
-            List<ProductData> productData = new List<ProductData>();
+            List<ProductDataDto> productData = new List<ProductDataDto>();
             foreach (var product in shop.Products)
             {
                 PriceRecord? record = product.PriceRecords.MaxBy(record => record.CheckDate);
 
-                productData.Add(new ProductData
-                {
-                    Id = product.Id,
-                    Name = product.Name,
-                    Tags = product.Tags.Select(t => t.Title).ToArray(),
-                    Price = record is null ? float.NaN : record.Price,
-                    TimeUpdated = record is null ? DateTime.MinValue : record.CheckDate,
-                    Shops = product.Shops.Select(s => s.Name).ToArray()
-                });
+                productData.Add(new ProductDataDto(
+                    product.Id,
+                    product.Name,
+                    product.Tags.Select(t => t.Title).ToArray(),
+                    new PriceRecordDto[] { new PriceRecordDto(record) }
+                ));
             }
 
             return productData;
         }
 
-        public async Task<ICollection<ProductData>> SearchProductsAsync(string searchQuery)
+        public async Task<ICollection<ProductDataDto>> SearchProductsAsync(string searchQuery)
         {
             var products = await _databaseContext.Products.Where(p => p.Name.Contains(searchQuery)).ToListAsync();
 
-            return products.Select(e => new ProductData
-            {
-                Id = e.Id,
-                Name = e.Name,
-                Tags = e.Tags.Select(t => t.Title).ToArray(),
-                Shops = e.Shops.Select(s => s.Name).ToArray(),
-                Price = e.PriceRecords.MaxBy(r => r.CheckDate).Price,
-                TimeUpdated = e.PriceRecords.MaxBy(r => r.CheckDate).CheckDate
-            })
+            return products.Select(product => new ProductDataDto(
+                product.Id,
+                product.Name,
+                product.Tags.Select(t => t.Title).ToArray(),
+                product.Shops.Select(s => {
+                    return new PriceRecordDto(product.PriceRecords.Where(r => r.Shop.Equals(s))
+                        .MaxBy(r => r.CheckDate));
+                }).ToArray()
+            ))
                 .ToList();
         }
 
-        public async Task<ICollection<ProductData>> SearchShopProductsAsync(string shopName, string searchQuery)
+        public async Task<ICollection<ProductDataDto>> SearchShopProductsAsync(string shopName, string searchQuery)
         {
             Shop shop = await _databaseContext.Shops.FirstOrDefaultAsync(e => e.Name.Equals(shopName));
 
@@ -147,15 +159,15 @@ namespace SmartShopping.Services
                 .Where(p => p.Shops.Contains(shop))
                 .ToListAsync();
 
-            return products.Select(e => new ProductData
-            {
-                Id = e.Id,
-                Name = e.Name,
-                Tags = e.Tags.Select(t => t.Title).ToArray(),
-                Shops = e.Shops.Select(s => s.Name).ToArray(),
-                Price = e.PriceRecords.MaxBy(r => r.CheckDate).Price,
-                TimeUpdated = e.PriceRecords.MaxBy(r => r.CheckDate).CheckDate
-            })
+            return products.Select(product => new ProductDataDto(
+                product.Id,
+                product.Name,
+                product.Tags.Select(t => t.Title).ToArray(),
+                product.Shops.Select(s => {
+                    return new PriceRecordDto(product.PriceRecords.Where(r => r.Shop.Equals(s))
+                        .MaxBy(r => r.CheckDate));
+                }).ToArray()
+            ))
                 .ToList();
         }
     }
