@@ -11,6 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 Secrets.SecretKey = builder.Configuration["SecretKey"];
 
+builder.Services.AddHttpClient();
+
 // Add services to the container.
 builder.Services.AddCors();
 builder.Services.AddDbContext<DatabaseContext>(opt => {

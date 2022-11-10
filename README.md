@@ -1,3 +1,5 @@
+# THIS BRANCH IS FOR DOING WHATEVER YOU WANT, CHANGES MADE HERE SHOULD NEVER MAKE IT TO DEV BRANCH
+
 # SmartShopping
 App that helps YOU save 💰💰💰!
 
