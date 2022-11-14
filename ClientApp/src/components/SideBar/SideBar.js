@@ -65,9 +65,9 @@ export class SideBar extends Component {
                             </NavLink>
                         </NavItem>
                         <NavItem className="w-100">
-                            <NavLink tag={RRNavLink} to="/groceries">
+                            <NavLink tag={RRNavLink} to="/upload">
                                 <i className="fa fa-shopping-bag me-2" />
-                                Groceries
+                                Upload
                             </NavLink>
                         </NavItem>
                         <NavItem className="w-100">
