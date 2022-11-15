@@ -42,10 +42,12 @@ namespace SmartShopping.Services
                 product.Shops.Add(shop);
             }
 
+            dto.GenerateTagsFromName();
+
             // update tags if needed
             foreach (var tagName in dto.Tags)
             {
-                if (!product.Tags.Any(t => t.SimplifiedName.Equals(tagName))) {
+                if (!product.Tags.Any(t => t.SimplifiedName.Equals(Helpers.Simplify(tagName)))) {
                     ProductTag tag = await _databaseContext.ProductTags.FirstOrDefaultAsync(e => e.SimplifiedName.Equals(tagName));
                     if (tag is null)
                     {
