@@ -4,7 +4,7 @@ export const ProductListItem = (props) => {
     const [expanded, setExpanded] = useState(false);
 
     return (
-        <div className  ="col-sm-12 col-md-6 col-xl-4">
+        <div className ="col-sm-6 col-xl-3">
             <div className="bg-secondary rounded h-100 p-4">
                 <div className="d-flex align-items-center justify-content-between">
                     <h6 className="mb-4">{props.product.name}</h6>

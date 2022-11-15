@@ -1,140 +1,16 @@
 ﻿import React, { useEffect } from "react";
-import { Input, Table, Form, Button } from "reactstrap";
-import { nanoid } from "nanoid";
-import { useState, Fragment } from "react";
-import ReadOnlyRow from "./ReadOnlyRow";
-import EditableRow from "./EditableRow";
+import { Input, Form, Button } from "reactstrap";
+import { useState } from "react";
+import { UploadList } from "./UploadList/UploadList";
+import { addItem, deleteAll } from "./UploadList/UploadListSlice";
 import { authFetch } from "../../auth/AuthFetch";
+import { useDispatch, useSelector } from "react-redux";
+import { nanoid } from "nanoid";
 
 export function Upload() {
+    const uploadList = useSelector(store => store.uploadList);
     const [shops, setShops] = useState([]);
-    const [groceries, setGroceries] = useState([]);
-
-    const [addFormData, setAddFormData] = useState({
-        store: "",
-        item: "",
-        price: "",
-        date: "",
-    });
-
-    const [editFormData, setEditFormData] = useState({
-        store: "",
-        item: "",
-        price: "",
-        date: "",
-      });
-
-    const [editGroceryId, setEditGroceryId] = useState(null);
-
-
-    const handleAddFormChange = (event) => {
-        event.preventDefault();
-        const fieldName = event.target.getAttribute("name");
-        const fieldValue = event.target.value;
-
-        const newFormData = { ...addFormData };
-        newFormData[fieldName] = fieldValue;
-
-        setAddFormData(newFormData);
-    };
-
-    const handleEditFormChange = (event) => {
-        event.preventDefault();
-        const fieldName = event.target.getAttribute("name");
-        const fieldValue = event.target.value;
-
-        const newFormData = { ...editFormData };
-        newFormData[fieldName] = fieldValue;
-
-        setEditFormData(newFormData);
-    };
-
-    const handleAddFormSubmit = (event) => {
-        event.preventDefault();
-
-        const newGrocery = {
-            id: nanoid(),
-            store: addFormData.store,
-            item: addFormData.item,
-            price: addFormData.price,
-            date: addFormData.date,
-        };
-
-        const newGroceries = [...groceries, newGrocery];
-        setGroceries(newGroceries);
-    };
-
-    const handleEditClickSubmit = (event) => {
-        event.preventDefault();
-        
-        const editedGrocery = {
-            id: editGroceryId,
-            store: editFormData.store,
-            item: editFormData.item,
-            price: editFormData.price,
-            date: editFormData.date,
-          };
-        
-          const newGroceries = [ ...groceries ]
-
-          const index = groceries.findIndex((grocery) => grocery.id === editGroceryId);
-
-          newGroceries[index] = editedGrocery;
-
-          setGroceries(newGroceries);
-          setEditGroceryId(null);
-    }
-
-    const handleDeleteGrocery = (groceryId) => {
-        const newGroceries= [...groceries];
-        
-        const index = groceries.findIndex((grocery)=> grocery.id === groceryId);
-
-        newGroceries.splice(index, 1);
-
-        setGroceries(newGroceries);
-    }
-
-    const handleEditClick = (event, grocery)=> {
-        event.preventDefault();
-        setEditGroceryId(grocery.id);
-
-        const formValues = {
-            store: grocery.store,
-            item: grocery.item,
-            price: grocery.price,
-            date: grocery.date,
-        }
-
-        setEditFormData(formValues);
-    }
-
-    const handleCancelClick = () => {
-        setEditGroceryId(null);
-    }
-
-    const submitData = () => {
-        const data = groceries.map(g => {
-            return {
-                name: g.item,
-                tags: [],
-                price: g.price,
-                shop: g.store,
-                dateOfPurchase: g.date + "T00:00:00.000Z"
-            }
-        });
-
-        console.log("Submiting: ", data);
-
-        authFetch("/api/product/submit", { 
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json'
-            }, 
-            body: JSON.stringify(data)
-        })
-            .then(setGroceries([]));
-    }
+    const dispatch = useDispatch();
 
     useEffect(() => {
         authFetch("/api/shop")
@@ -142,72 +18,75 @@ export function Upload() {
             .then(setShops);
     }, []);
 
+    const submitHandler = (e) => {
+        e.preventDefault();
+
+        let formData = {
+            id: nanoid(),
+            name: e.target.name.value,
+            tags: [],
+            price: e.target.price.value,
+            shop: e.target.shop.value,
+            dateOfPurchase: e.target.dateOfPurchase.value
+        };
+
+        console.log("Adding data: ", formData);
+        dispatch(addItem(formData));
+        console.log("Added");
+    };
+
+    const uploadHandler = () => {
+        authFetch("/api/product/submit", { 
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            }, 
+            body: JSON.stringify(uploadList),
+        })
+            .then(dispatch(deleteAll()));
+    };
+
+    const deleteHandler = () => {
+        dispatch(deleteAll());
+    };
+
     return (
         <div className="container-fluid pt-4 px-4">
             <div class="row g-4">
                 <div class="col-sm-12 col-xl-6">
                     <div className="bg-secondary rounded p-4">
-                        <Form onSubmit={handleAddFormSubmit}>
+                        <Form onSubmit={submitHandler}>
                             <label >Store Name</label>
-                            <select
-                                required
-                                className="form-select"
-                                name="store"
-                                onChange={handleAddFormChange}
-                            >
+                            <select required className="form-select" name="shop" >
                                 <option></option>
                                 {shops.map(e => <option key={e.id}>{e.name}</option>)}
                             </select>
                             <label style={{marginTop:"8px"}}>Item Name</label>
-                            <Input
-                                required
-                                type="text"
-                                name="item"
-                                onChange={handleAddFormChange}
-                            />
+                            <Input required type="text" name="name" />
                             <label style={{marginTop:"8px"}}>Item Price</label>
-                            <Input
-                                required
-                                type="number"
-                                step="0.01"
-                                name="price"
-                                onChange={handleAddFormChange}
-                            />
+                            <Input required type="number" step="0.01" name="price" />
                             <label style={{marginTop:"8px"}}>Purchase Date</label>
-                            <Input
-                                required
-                                type="date"
-                                name="date"
-                                onChange={handleAddFormChange}
-                            />
-                            <Button color="primary" style={{marginTop:"11px"}}>Add</Button>
+                            <Input required type="date" name="dateOfPurchase"/>
+                            <Button type="submit" color="primary" className="mt-4">Add</Button>
                         </Form>
-
-                        <Form onSubmit = {handleEditClickSubmit}>
-                            <Table>
-                                <thead>
-                                    <tr>
-                                        <th>Store</th>
-                                        <th>Item</th>
-                                        <th>Price (€)</th>
-                                        <th>Date</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {groceries.map((data) => (
-                                        <Fragment>
-                                            {editGroceryId === data.id ? (<EditableRow handleCancelClick={handleCancelClick} 
-                                            editFormData={editFormData} shops={shops} handleEditFormChange={handleEditFormChange} />
-                                            ) : (
-                                            <ReadOnlyRow data={data} handleEditClick={handleEditClick} handleDeleteClick={handleDeleteGrocery}/>)}
-                                        </Fragment>    
-                                    ))}
-                                </tbody>
-                            </Table>
-                        </Form>
-                        { groceries.length != 0 && <Button color="primary" className="m-2" onClick={submitData}>Submit</Button> }
                     </div>
                 </div>
+                <div class="col-sm-12 col-xl-6">
+                    <div className="bg-secondary rounded h-100 p-4">
+                        <h4>Here will be element for uploading photos of receipts</h4>
+                    </div>
+                </div>
+                <UploadList shops={shops}/>
+                {uploadList.length !== 0 && (
+                    <div class="container-fluid pt-4 px-4">
+                        <div class="bg-secondary text-center rounded p-4">
+                            <div class="d-flex align-items-center justify-content-between mb-4">
+                                <Button color="primary" onClick={uploadHandler}>Upload</Button>
+                                <Button color="primary" onClick={deleteHandler}>Delete All</Button>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );
