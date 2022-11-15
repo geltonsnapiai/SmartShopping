@@ -6,6 +6,8 @@ import App from './App';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
 import { authenticationService } from './auth/AuthenticationServce';
+import store from './Store';
+import { Provider } from 'react-redux';
 
 const baseUrl = document.getElementsByTagName('base')[0].getAttribute('href');
 const rootElement = document.getElementById('root');
@@ -15,7 +17,9 @@ authenticationService.checkIfLoggedIn();
 
 root.render(
     <BrowserRouter basename={baseUrl}>
-        <App />
+        <Provider store={store}>
+            <App />
+        </Provider>
     </BrowserRouter>);
 
 // If you want your app to work offline and load faster, you can change
