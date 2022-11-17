@@ -1,6 +1,6 @@
 import { PageNotFound } from "./components/PageNotFound";
 import { Search } from "./components/Search/Search";
-import { Groceries } from "./components/Groceries/Groceries";
+import { Upload } from "./components/Upload/Upload";
 import { Home } from "./components/Home/Home";
 import { Navigate, Outlet } from 'react-router-dom';
 import { authenticationService } from "./auth/AuthenticationServce";
@@ -26,8 +26,8 @@ export const AppRoutes = [
         auth: true
     },
     {
-        path: '/groceries',
-        element: <Groceries />,
+        path: '/upload',
+        element: <Upload />,
         auth: true
     },
     {

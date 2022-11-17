@@ -1,5 +1,6 @@
 ﻿using FakeItEasy;
 using SmartShopping.Services;
+using SmartShopping.Models;
 
 namespace SmartShopping.Tests.Services
 {
@@ -27,7 +28,7 @@ namespace SmartShopping.Tests.Services
         {
             var userService = A.Fake<IUserService>();
             A.CallTo(() => userService.GetUserByEmail(email))
-                .Returns(emailIsTaken ? new Models.User { Email = email } : null);
+                .Returns(emailIsTaken ? new User { Email = email } : null);
             var validatorService = new ValidationService(userService);
 
             bool result = validatorService.ValidateEmail(email, out string? errorMessage);

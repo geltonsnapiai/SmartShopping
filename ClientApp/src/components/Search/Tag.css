@@ -1,0 +1,20 @@
+.tag {
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.tag p {
+    font-size: 14px;
+}
+
+.tag-tag {
+    color: #000;
+    background-color: #ffc107;
+    border-color: #ffc107
+}
+
+.tag-shop {
+    color: #fff;
+    background-color: #198754;
+    border-color: #198754
+}

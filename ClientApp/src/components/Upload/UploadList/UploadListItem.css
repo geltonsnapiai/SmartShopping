@@ -1,0 +1,8 @@
+.hoverable:hover {
+    box-shadow: 0 0 10px rgba(191, 0, 0, 0.837);
+}
+
+.hoverable {
+    transition: 0.3s;
+    cursor: pointer;
+}
