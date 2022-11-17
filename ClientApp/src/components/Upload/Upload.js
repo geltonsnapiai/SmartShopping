@@ -2,7 +2,7 @@
 import { Input, Form, Button } from "reactstrap";
 import { useState } from "react";
 import { UploadList } from "./UploadList/UploadList";
-import { addItem, deleteAll } from "./UploadList/UploadListSlice";
+import { addItem, deleteAll } from "../../state/slices/UploadListSlice";
 import { authFetch } from "../../auth/AuthFetch";
 import { useDispatch, useSelector } from "react-redux";
 import { nanoid } from "nanoid";

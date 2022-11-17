@@ -6,7 +6,7 @@ import App from './App';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
 import { authenticationService } from './auth/AuthenticationServce';
-import store from './Store';
+import { store } from './state/Store';
 import { Provider } from 'react-redux';
 
 const baseUrl = document.getElementsByTagName('base')[0].getAttribute('href');

@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { Input, Form, Button } from "reactstrap";
-import { deleteItem, updateItem } from './UploadListSlice';
+import { deleteItem, updateItem } from '../../../state/slices/UploadListSlice';
 import './UploadListItem.css';
-import { authFetch } from '../../../auth/AuthFetch';
 import { useDispatch } from 'react-redux';
 
 export const UploadListItem = (props) => {

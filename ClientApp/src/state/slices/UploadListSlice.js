@@ -24,4 +24,4 @@ export const uploadListSlice = createSlice({
 
 export const { addItem, deleteItem, deleteAll, updateItem } = uploadListSlice.actions;
 
-export default uploadListSlice.reducer;
+export const uploadListSelector = store => store.uploadList;
