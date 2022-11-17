@@ -2,20 +2,25 @@
 import { Input, Form, Button } from "reactstrap";
 import { useState } from "react";
 import { UploadList } from "./UploadList/UploadList";
-import { addItem, deleteAll } from "../../state/slices/UploadListSlice";
+import { addItem, deleteAll, uploadProducts, uploadProductsSelector, uploadProductsStatusSelector } from "../../state/slices/UploadProductsSlice";
+import { shopsSelector, shopsStatusSelector, loadShops } from "../../state/slices/ShopsSlice";
 import { authFetch } from "../../auth/AuthFetch";
 import { useDispatch, useSelector } from "react-redux";
 import { nanoid } from "nanoid";
+import { store } from "../../state/Store";
+import { asyncStatus } from "../../state/AsyncStatus";
 
 export function Upload() {
-    const uploadList = useSelector(store => store.uploadList);
-    const [shops, setShops] = useState([]);
+    const products = useSelector(uploadProductsSelector);
+    const productsStatus = useSelector(uploadProductsStatusSelector);
+    const shops = useSelector(shopsSelector);
+    const shopsStatus = useSelector(shopsStatusSelector);
     const dispatch = useDispatch();
 
     useEffect(() => {
-        authFetch("/api/shop")
-            .then(response => response.json())
-            .then(setShops);
+        if (shopsStatus === asyncStatus.IDLE) {
+            store.dispatch(loadShops());
+        }
     }, []);
 
     const submitHandler = (e) => {
@@ -30,20 +35,11 @@ export function Upload() {
             dateOfPurchase: e.target.dateOfPurchase.value
         };
 
-        console.log("Adding data: ", formData);
         dispatch(addItem(formData));
-        console.log("Added");
     };
 
     const uploadHandler = () => {
-        authFetch("/api/product/submit", { 
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json'
-            }, 
-            body: JSON.stringify(uploadList),
-        })
-            .then(dispatch(deleteAll()));
+        store.dispatch(uploadProducts());
     };
 
     const deleteHandler = () => {
@@ -52,8 +48,8 @@ export function Upload() {
 
     return (
         <div className="container-fluid pt-4 px-4">
-            <div class="row g-4">
-                <div class="col-sm-12 col-xl-6">
+            <div className="row g-4">
+                <div className="col-sm-12 col-xl-6">
                     <div className="bg-secondary rounded p-4">
                         <Form onSubmit={submitHandler}>
                             <label >Store Name</label>
@@ -77,12 +73,12 @@ export function Upload() {
                     </div>
                 </div>
                 <UploadList shops={shops}/>
-                {uploadList.length !== 0 && (
+                {products.length !== 0 && (
                     <div class="container-fluid pt-4 px-4">
                         <div class="bg-secondary text-center rounded p-4">
                             <div class="d-flex align-items-center justify-content-between mb-4">
-                                <Button color="primary" onClick={uploadHandler}>Upload</Button>
-                                <Button color="primary" onClick={deleteHandler}>Delete All</Button>
+                                <Button color="primary" onClick={uploadHandler} disabled={productsStatus === asyncStatus.LOADING}>Upload</Button>
+                                <Button color="primary" onClick={deleteHandler} disabled={productsStatus === asyncStatus.LOADING}>Delete All</Button>
                             </div>
                         </div>
                     </div>

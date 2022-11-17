@@ -1,9 +1,9 @@
 import { useSelector } from "react-redux";
-import { uploadListSelector } from "../../../state/slices/UploadListSlice";
+import { uploadProductsSelector } from "../../../state/slices/UploadProductsSlice";
 import { UploadListItem } from "./UploadListItem";
 
 export const UploadList = (props) => {
-    const uploadList = useSelector(uploadListSelector);
+    const uploadList = useSelector(uploadProductsSelector);
 
     return (
         <div className="container-fluid pt-4 px-4">

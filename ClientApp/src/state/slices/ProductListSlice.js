@@ -3,7 +3,7 @@ import { authFetch } from "../../auth/AuthFetch";
 import { asyncStatus } from "../AsyncStatus";
 
 export const loadProducts = createAsyncThunk(
-    'searchProductList',
+    'productList/load',
     async (query, thunkAPI) => {
         const url = "/api/product?" + new URLSearchParams({search: query});
         return await authFetch(url, { signal: thunkAPI.signal })
@@ -12,20 +12,14 @@ export const loadProducts = createAsyncThunk(
     },
 );
 
-export const searchProductListSlice = createSlice({
-    name: "searchProductList",
+export const productListSlice = createSlice({
+    name: "productList",
     initialState: {
         productList: [],
-        asyncStatus: asyncStatus.IDLE,
+        status: asyncStatus.IDLE,
         error: null,
     },
-    reducers: {
-        deleteAll: (state) => {
-            state.productList = [];
-            state.asyncStatus = asyncStatus.IDLE;
-            state.error = null;
-        }
-    },
+    reducers: { },
     extraReducers: (builder) => {
         builder
             .addCase(loadProducts.fulfilled, (state, action) => {
@@ -42,8 +36,6 @@ export const searchProductListSlice = createSlice({
     }
 });
 
-export const { deleteAll } = searchProductListSlice.actions;
-
-export const searchProductListSelector = store => store.searchProductList.productList;
-export const searchProductListAsyncStatusSelector = store => store.searchProductList.asyncStatus;
-export const searchProductListErrorSelector = store => store.searchProductList.error;
+export const productListSelector = store => store.productList.productList;
+export const productListStatusSelector = store => store.productList.status;
+export const productListErrorSelector = store => store.productList.error;

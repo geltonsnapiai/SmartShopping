@@ -1,10 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { searchProductListSlice } from './slices/SearchProductListSlice';
-import { uploadListSlice } from './slices/UploadListSlice';
+import { productListSlice } from './slices/ProductListSlice';
+import { shopsSlice } from './slices/ShopsSlice';
+import { uploadProductsSlice } from './slices/UploadProductsSlice';
 
 export const store = configureStore({
     reducer: {
-        uploadList: uploadListSlice.reducer,
-        searchProductList: searchProductListSlice.reducer,
+        uploadProducts: uploadProductsSlice.reducer,
+        productList: productListSlice.reducer,
+        shops: shopsSlice.reducer,
     },
 });

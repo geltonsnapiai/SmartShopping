@@ -1,12 +1,12 @@
 import { useSelector } from "react-redux"
 import { Spinner } from "reactstrap";
 import { asyncStatus } from "../../state/AsyncStatus";
-import { searchProductListAsyncStatusSelector, searchProductListSelector } from "../../state/slices/SearchProductListSlice"
+import { productListStatusSelector, productListSelector } from "../../state/slices/ProductListSlice"
 import { ProductListItem } from "./ProductListItem"
 
 export const ProductList = () => {
-    const products = useSelector(searchProductListSelector);
-    const status = useSelector(searchProductListAsyncStatusSelector);
+    const products = useSelector(productListSelector);
+    const status = useSelector(productListStatusSelector);
 
     if (status === asyncStatus.LOADING) {
         return (

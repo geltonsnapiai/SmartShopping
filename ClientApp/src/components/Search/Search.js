@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import SearchBar from './SearchBar';
 import { ProductList } from './ProductList';
 import { useDispatch } from 'react-redux';
-import { loadProducts } from '../../state/slices/SearchProductListSlice';
+import { loadProducts } from '../../state/slices/ProductListSlice';
 import { store } from '../../state/Store';
 
 export const Search = () => {

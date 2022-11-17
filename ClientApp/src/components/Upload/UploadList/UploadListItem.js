@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Input, Form, Button } from "reactstrap";
-import { deleteItem, updateItem } from '../../../state/slices/UploadListSlice';
+import { deleteItem, updateItem } from '../../../state/slices/UploadProductsSlice';
 import './UploadListItem.css';
 import { useDispatch } from 'react-redux';
 
