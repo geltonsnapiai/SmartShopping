@@ -173,27 +173,31 @@ class AuthenticationService {
             }
         }
 
-        let response = await fetch(url, finalOptions);
-        if (response.status !== 401) // unauthorized
+        let response;
+        try {
+            response = await fetch(url, finalOptions);
             return response;
-        
-        let status = await this.#refreshTokens();
-        if (!status.ok) 
-            return response;
-
-        const {
-            headers,
-            ...extraOpts
-        } = finalOptions;
-
-        let refreshedOptions = {
-            headers: {
-                Authorization: `Bearer ${this.#accessToken}`,
-                ...headers
-            },
-            ...extraOpts
+        } catch (err) {
+            console.error(err);
+            
+            let status = await this.#refreshTokens();
+            if (!status.ok) 
+                return response;
+            
+            const {
+                headers,
+                ...extraOpts
+            } = finalOptions;
+    
+            let refreshedOptions = {
+                headers: {
+                    Authorization: `Bearer ${this.#accessToken}`,
+                    ...headers
+                },
+                ...extraOpts
+            }
+            return fetch(url, refreshedOptions);
         }
-        return fetch(url, refreshedOptions);
     }
 
     getAccessToken() {

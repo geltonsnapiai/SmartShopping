@@ -1,14 +1,13 @@
 import React, { Component } from "react";
 import {
-    Collapse,
     Navbar,
     NavbarBrand,
-    NavbarToggler,
     NavItem,
     NavLink,
 } from "reactstrap";
 import { NavLink as RRNavLink, Link } from "react-router-dom";
 import { authFetch } from '../../auth/AuthFetch';
+import { NamedLogo } from "../NamedLogo";
 
 export class SideBar extends Component {
     constructor(props) {
@@ -30,17 +29,16 @@ export class SideBar extends Component {
 
     render() {
         return (
-            <div className={`sidebar pe-4 pb-3 ${this.props.open ? "open" : ""}`} >
+            <div className={`sidebar pt-2 pe-4 pb-4 ${this.props.open ? "open" : ""}`} >
                 <Navbar className="navbar bg-secondary navbar-dark">
                     <NavbarBrand
-                        className="navbar-brand mx-4 mb-3"
+                        className="navbar-brand mx-1 mb-3"
                         tag={Link}
                         to="/"
                     >
-                        <h4 className="text-primary">
-                            <i className="fa fa-user-edit me-2"></i>
-                            SmartShopping
-                        </h4>
+                        <h3 className="text-primary">
+                            <NamedLogo/>
+                        </h3>
                     </NavbarBrand>
                     {
                         (this.state.user !== null) && (

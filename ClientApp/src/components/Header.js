@@ -37,15 +37,15 @@ class Header extends Component {
         if (authenticationService.userIsLoggedIn()) {
             return (
                 <Navbar className="navbar-expand bg-secondary navbar-dark sticky-top px-4 py-2">
-                        <NavbarToggler className="sidebar-toggler flex-shrink-0" style={{color: "var(--primary)"}} tag="a" onClick={this.toggleCallback}>
-                            <i className="fa fa-bars"></i>
-                        </NavbarToggler>
-                        <NavbarBrand className="navbar-brand d-flex d-lg-none me-4" tag={Link} to="/">
-                            <h2 className="text-primary mb-0"><NamedLogo/></h2>
-                        </NavbarBrand>
-                        <div className="navbar-nav allign-items-center ms-auto">
-                            <ProfileButton userName={this.state.user.name}/>
-                        </div>
+                    <NavbarToggler className="sidebar-toggler flex-shrink-0" style={{color: "var(--primary)"}} tag="a" onClick={this.toggleCallback}>
+                        <i className="fa fa-bars"></i>
+                    </NavbarToggler>
+                    <NavbarBrand className="navbar-brand d-flex d-lg-none me-4" tag={Link} to="/">
+                        <h2 className="text-primary ms-4 mb-0"><NamedLogo/></h2>
+                    </NavbarBrand>
+                    <div className="navbar-nav allign-items-center ms-auto">
+                        <ProfileButton userName={this.state.user.name}/>
+                    </div>
                 </Navbar>
             );
         }

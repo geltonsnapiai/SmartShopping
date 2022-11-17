@@ -16,17 +16,17 @@ export function ProfileButton({ userName }) {
     
 
     return(
-        <div class="nav-item dropdown" onMouseEnter={showDropDown} onMouseLeave={hideDropDown}>
-            <a href="#" class="nav-link dropdown-toggle show">
-            <img class="rounded-circle me-lg-2" src="assets/img/avatar.jpg" alt="fa fa-user me-lg-2" style={{width: 40, height: 40}}/>
-                <span class="d-none d-lg-inline-flex">{userName}</span>
+        <div className="nav-item dropdown" onMouseEnter={showDropDown} onMouseLeave={hideDropDown}>
+            <a href="#" className="nav-link dropdown-toggle show">
+            <img className="rounded-circle me-lg-2" src="assets/img/avatar.jpg" alt="fa fa-user me-lg-2" style={{width: 40, height: 40}}/>
+                <span className="d-none d-lg-inline-flex">{userName}</span>
             </a>
             
-            {state? (<div class="dropdown-menu dropdown-menu-end bg-secondary border-0 rounded-0 rounded-bottom m-0 show">
-                <button class="dropdown-item">My Profile</button>
-                <button class="dropdown-item">Settings</button>
-                <button class="dropdown-item">Shopping List</button>
-                <button class="dropdown-item" onClick={() => authenticationService.logout()}>Log out</button>
+            {state? (<div className="dropdown-menu dropdown-menu-end bg-secondary border-0 rounded-0 rounded-bottom m-0 show">
+                <button className="dropdown-item">My Profile</button>
+                <button className="dropdown-item">Settings</button>
+                <button className="dropdown-item">Shopping List</button>
+                <button className="dropdown-item" onClick={() => authenticationService.logout()}>Log out</button>
             </div>)
             : null}
             
