@@ -1,0 +1,16 @@
+.car-item-amount span {
+    color: white;
+    margin: 0 0.25rem;
+}
+
+.car-item-amount i {
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+
+.car-item-amount i:hover {
+    transition: 0.3s;
+    color: var(--primary);
+    scale: 110%;
+}
