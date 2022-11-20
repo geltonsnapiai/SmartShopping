@@ -24,7 +24,7 @@ namespace SmartShopping.Models
             return (display, simplified);
         } 
 
-        public static string RemoveDiacritics(string stIn)
+        private static string RemoveDiacritics(string stIn)
         {
             string stFormD = stIn.Normalize(NormalizationForm.FormD);
             StringBuilder sb = new StringBuilder();
@@ -41,7 +41,7 @@ namespace SmartShopping.Models
             return (sb.ToString().Normalize(NormalizationForm.FormC));
         }
 
-        public static string FirstCharToUpper(this string input)
+        private static string FirstCharToUpper(this string input)
         {
             return input switch
             {
