@@ -20,7 +20,7 @@ namespace SmartShopping.Models
         public static (string Display, string Simplified) ProcessName(string name)
         {
             var display = Format(name);
-            var simplified = Format(display);
+            var simplified = Simplify(display);
             return (display, simplified);
         } 
 
