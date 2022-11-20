@@ -7,7 +7,7 @@ namespace SmartShopping.Models
 {
     public static class Helpers
     {
-        public static string Simplify(string val)
+        private static string Simplify(string val)
         {
             return RemoveDiacritics(val.ToLower());
         }
@@ -16,6 +16,13 @@ namespace SmartShopping.Models
         {
             return Regex.Replace(val.ToLower(), @"\s+", " ").FirstCharToUpper();
         }
+
+        public static (string Display, string Simplified) ProcessName(string name)
+        {
+            var display = Format(name);
+            var simplified = Format(display);
+            return (display, simplified);
+        } 
 
         public static string RemoveDiacritics(string stIn)
         {

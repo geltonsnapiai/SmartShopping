@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using SmartShopping.Data;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SmartShopping.Models
 {
-    public class PriceRecord
+    public class PriceRecord : IEntity
     {
         public Guid Id { get; set; }
         public virtual Product Product { get; set; }
