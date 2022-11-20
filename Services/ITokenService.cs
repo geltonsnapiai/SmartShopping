@@ -9,5 +9,6 @@ namespace SmartShopping.Services
         public string GenerateRefreshToken();
         public (string AccessToken, string RefreshToken) GenerateTokens(User user);
         public string? GetEmailFromAccessToken(string token);
+        public Guid GetIdFromAccessToken(string token);
     }
 }
