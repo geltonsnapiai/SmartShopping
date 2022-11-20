@@ -2,8 +2,6 @@
 using SmartShopping.Services;
 using SmartShopping.Models;
 using SmartShopping.Repositories;
-using Microsoft.EntityFrameworkCore;
-using SmartShopping.Data;
 using MockQueryable.FakeItEasy;
 
 namespace SmartShopping.Tests.Services
