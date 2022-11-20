@@ -1,21 +1,26 @@
 ﻿using Microsoft.IdentityModel.Tokens;
+using Microsoft.EntityFrameworkCore;
 using SmartShopping.Dtos;
+using SmartShopping.Models;
+using SmartShopping.Repositories;
 using System.Text.RegularExpressions;
 
 namespace SmartShopping.Services
 {
     public class ValidationService : IValidationService
     {
-        private readonly IUserService _userService;
+        private readonly IRepository _repository;
+
+
         private static readonly Regex regex = new Regex(
             @"^[\w!#$%&'*+\-/=?\^_`{|}~]+(\.[\w!#$%&'*+\-/=?\^_`{|}~]+)*"
             + "@"
             + @"((([\-\w]+\.)+[a-zA-Z]{2,4})|(([0-9]{1,3}\.){3}[0-9]{1,3}))$");
         // ugly
 
-        public ValidationService(IUserService userService)
+        public ValidationService(IRepository repository)
         {
-            _userService = userService;
+            _repository = repository;
         }
 
         public bool ValidateRegistration(RegisterDto dto, out string? errorMessage)
@@ -62,7 +67,7 @@ namespace SmartShopping.Services
                 return false;
             }
 
-            var user = _userService.GetUserByEmail(email);
+            var user = _repository.Set<User>().FirstOrDefault(e => e.Email.Equals(email));
             if (user is not null)
             {
                 errorMessage = "Email is taken";
@@ -89,7 +94,7 @@ namespace SmartShopping.Services
                 return (false, errorMessage);
             }
 
-            var user = await _userService.GetUserByEmailAsync(email);
+            var user = await _repository.Set<User>().FirstOrDefaultAsync(e => e.Email.Equals(email));
             if (user is not null)
             {
                 errorMessage = "Email is taken";

@@ -8,9 +8,11 @@ namespace SmartShopping.Repositories
     {
         public bool Autosave { get; set; }
 
-        public Task<T> Create<T>(T entity) where T : class, IEntity;
+        public Task<T> CreateAsync<T>(T entity) where T : class, IEntity;
 
         public Task<T?> ReadAsync<T>(Guid id) where T : class, IEntity;
+
+        public Task<T?> ReadNamedAsync<T>(string name) where T : class, INamedEntity;
 
         public Task<T> UpdateAsync<T>(T entity) where T : class, IEntity;
 
@@ -24,6 +26,8 @@ namespace SmartShopping.Repositories
 
         public Task<T> UpdateCreateAsync<T>(T entity, CreateCallback<T> createCallback) where T : class, IEntity;
 
-        public IQueryable<T> Table<T>() where T : class, IEntity;
+        public IQueryable<T> Set<T>() where T : class, IEntity;
+
+        public Task SaveChangesAsync();
     }
 }

@@ -1,72 +1,108 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SmartShopping.Data;
+using SmartShopping.Dtos;
 using SmartShopping.Models;
+using SmartShopping.Repositories;
 
 namespace SmartShopping.Services
 {
     public class UserService : IUserService
     {
-        private readonly DatabaseContext _context;
+        private readonly IRepository _repository;
+        private readonly ITokenService _tokenService;
+        private readonly IValidationService _validationService;
 
-        public UserService(DatabaseContext context)
+        public UserService(IRepository repository, ITokenService tokenService, IValidationService validationService)
         {
-            _context = context;
+            _repository = repository;
+            _tokenService = tokenService;
+            _validationService = validationService;
+
+            repository.Autosave = true;
         }
 
-        public void CreateUser(User user)
+        public async Task DeleteUserByIdAsync(Guid id)
         {
-            _context.Users.Add(user);
-            _context.SaveChanges();
+            User? user = await _repository.ReadAsync<User>(id);
+            if (user is not null)
+                await _repository.DeleteAsync(user);
         }
 
-        public async Task CreateUserAsync(User user)
+        public async Task<User> GetUserByIdAsync(Guid id)
         {
-            await _context.Users.AddAsync(user);
-            await _context.SaveChangesAsync();
+            User? user = await _repository.ReadAsync<User>(id);
+
+            if (user is null)
+                throw new AuthenticationException("There is no such user.");
+
+            return user;
         }
 
-        public User? GetUserByEmail(string email)
+        public async Task<(string AccessToken, string RefreshToken)> LoginUserAsync(LoginDto loginData)
         {
-            return _context.Users.FirstOrDefault(u => u.Email == email);
+            var user = await _repository.Set<User>().FirstOrDefaultAsync(e => e.Email.Equals(loginData.Email));
+
+            if (user is null || !BCrypt.Net.BCrypt.Verify(loginData.Password, user.PasswordHash))
+                throw new AuthenticationException("Username or password is incorrect");
+
+            var tokens = _tokenService.GenerateTokens(user);
+
+            user.RefreshToken = tokens.RefreshToken;
+            user.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
+
+            await _repository.UpdateAsync(user);
+
+            return tokens;
         }
 
-        public Task<User?> GetUserByEmailAsync(string email)
+        public async Task<(string AccessToken, string RefreshToken)> RefreshTokensAsync(TokenDto oldTokens)
         {
-            return _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            string accessToken = oldTokens.AccessToken;
+            string refreshToken = oldTokens.RefreshToken;
+
+            var id = _tokenService.GetIdFromAccessToken(accessToken);
+
+            User? user = await _repository.ReadAsync<User>(id);
+
+            if (user is null)
+                throw new AuthenticationException("There is no such user.");
+
+            if (user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
+                throw new AuthenticationException("Login expired");
+
+            var tokens = _tokenService.GenerateTokens(user);
+
+            user.RefreshToken = tokens.RefreshToken;
+            user.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
+            await _repository.UpdateAsync(user);
+
+            return tokens;
         }
 
-        public User? GetUserById(Guid id)
+        public async Task<(string AccessToken, string RefreshToken)> RegisterUserAsync(RegisterDto registerData)
         {
-            return _context.Users.FirstOrDefault(u => u.Id == id);
+            var user = new User
+            {
+                Id = Guid.NewGuid(),
+                Name = registerData.Name,
+                Email = registerData.Email,
+                Role = "user",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerData.Password)
+            };
+
+            (string accessToken, string refreshToken) = _tokenService.GenerateTokens(user);
+            user.RefreshToken = refreshToken;
+            user.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
+
+            await _repository.CreateAsync(user);
+
+            return (accessToken, refreshToken);
         }
 
-        public Task<User?> GetUserByIdAsync(Guid id)
+        public async Task RevokeTokensByUserIdAsync(Guid id)
         {
-            return _context.Users.FirstOrDefaultAsync(u => u.Id == id);
-        }
-
-        public void UpdateUser(User user)
-        {
-            if (_context.Users.Contains(user))
-                _context.SaveChanges();
-        }
-
-        public async Task UpdateUserAsync(User user)
-        {
-            if (await _context.Users.ContainsAsync(user))
-                await _context.SaveChangesAsync();
-        }
-
-        public void DeleteUser(User user)
-        {
-            _context.Users.Remove(user);
-            _context.SaveChanges();
-        }
-
-        public async Task DeleteUserAsync(User user)
-        {
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
+            User? user = await _repository.ReadAsync<User>(id);
+            user.RefreshToken = null;
+            await _repository.UpdateAsync(user);
         }
     }
 }

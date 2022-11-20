@@ -1,5 +1,4 @@
 ﻿using SmartShopping.Dtos;
-using SmartShopping.Models;
 
 namespace SmartShopping.Services
 {

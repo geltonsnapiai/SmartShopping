@@ -16,7 +16,7 @@ namespace SmartShopping.Repositories
 
         public bool Autosave { get; set; }
 
-        public async Task<T> Create<T>(T entity) where T : class, IEntity
+        public async Task<T> CreateAsync<T>(T entity) where T : class, IEntity
         {
             entity.Id = Guid.NewGuid();
             await _databaseContext.Set<T>().AddAsync(entity);
@@ -27,6 +27,12 @@ namespace SmartShopping.Repositories
         public async Task<T?> ReadAsync<T>(Guid id) where T : class, IEntity
         {
             return await _databaseContext.Set<T>().FindAsync(id);
+        }
+
+        public async Task<T?> ReadNamedAsync<T>(string name) where T : class, INamedEntity
+        {
+            (_, string simplifiedName) = Helpers.ProcessName(name);
+            return await _databaseContext.Set<T>().FirstOrDefaultAsync(e => e.SimplifiedName.Equals(simplifiedName));
         }
 
         public async Task<T> UpdateAsync<T>(T entity) where T : class, IEntity
@@ -52,7 +58,7 @@ namespace SmartShopping.Repositories
 
             T? entity = await _databaseContext.Set<T>().FirstOrDefaultAsync(e => e.SimplifiedName.Equals(names.Simplified));
 
-            if (entity == null)
+            if (entity is null)
             {
                 entity = new T();
                 entity.Id = Guid.NewGuid();
@@ -88,9 +94,14 @@ namespace SmartShopping.Repositories
             return entity;
         }
 
-        public IQueryable<T> Table<T>() where T : class, IEntity
+        public IQueryable<T> Set<T>() where T : class, IEntity
         {
             return _databaseContext.Set<T>();
+        }
+
+        public async Task SaveChangesAsync()
+        {
+            await _databaseContext.SaveChangesAsync();
         }
     }
 }
