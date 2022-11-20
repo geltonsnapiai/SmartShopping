@@ -1,19 +1,23 @@
-﻿using SmartShopping.Models;
+﻿using SmartShopping.Dtos;
+using SmartShopping.Models;
 
 namespace SmartShopping.Services
 {
     public interface IUserService
     {
-        public void CreateUser(User user);
-        public User? GetUserByEmail(string email);
-        public User? GetUserById(Guid id);
-        public void UpdateUser(User user);
-        public void DeleteUser(User user);
+        public Task<(string AccessToken, string RefreshToken)> RegisterUserAsync(RegisterDto registerData);
+        public Task<(string AccessToken, string RefreshToken)> LoginUserAsync(LoginDto loginData);
+        public Task<(string AccessToken, string RefreshToken)> RefreshTokensAsync(TokenDto oldTokens);
+        public Task RevokeTokensByUserIdAsync(Guid id);
+        public Task DeleteUserByIdAsync(Guid id);
+        public Task<User> GetUserByIdAsync(Guid id);
+    }
 
-        public Task CreateUserAsync(User user);
-        public Task<User?> GetUserByEmailAsync(string email);
-        public Task<User?> GetUserByIdAsync(Guid id);
-        public Task UpdateUserAsync(User user);
-        public Task DeleteUserAsync(User user);
+    public class AuthenticationException : Exception
+    {
+        public AuthenticationException(string message) : base(message)
+        {
+
+        }
     }
 }

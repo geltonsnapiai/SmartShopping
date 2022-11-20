@@ -1,6 +1,8 @@
-﻿namespace SmartShopping.Models
+﻿using SmartShopping.Data;
+
+namespace SmartShopping.Models
 {
-    public class ProductTag
+    public class ProductTag : INamedEntity
     {
         public Guid Id { get; set; }
         public string DisplayName { get; set; }
@@ -10,12 +12,6 @@
         public ProductTag()
         {
             Products = new List<Product>();
-        }
-
-        public void SetName(string name)
-        {
-            DisplayName = Helpers.Format(name);
-            SimplifiedName = Helpers.Simplify(DisplayName);
         }
     }
 }

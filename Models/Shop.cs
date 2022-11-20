@@ -1,8 +1,9 @@
-﻿using System.Text.Json.Serialization;
+﻿using SmartShopping.Data;
+using System.Text.Json.Serialization;
 
 namespace SmartShopping.Models
 {
-    public class Shop : IEquatable<Shop>
+    public class Shop : IEquatable<Shop>, IEntity
     {
         public Guid Id { get; set; }
         public string Name { get; set; }

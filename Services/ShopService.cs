@@ -2,40 +2,33 @@
 using SmartShopping.Data;
 using SmartShopping.Dtos;
 using SmartShopping.Models;
+using SmartShopping.Repositories;
 
 namespace SmartShopping.Services
 {
     public class ShopService : IShopService
     {
-        private readonly DatabaseContext _databaseContext;
+        private readonly IRepository _repository;
 
-        public ShopService(DatabaseContext databaseContext)
+        public ShopService(IRepository repository)
         {
-            this._databaseContext = databaseContext;
+            _repository = repository;
+            _repository.Autosave = true;
         }
 
         public async Task<ShopDto> AddShopAsync(string name)
         {
-            Shop? shop = await _databaseContext.Shops.FirstOrDefaultAsync(e => e.Name.Equals(name));
-
-            if (shop is not null)
-                return shop.ToDto();
-
-            shop = new Shop()
+            var shop = await _repository.CreateAsync<Shop>(new Shop
             {
-                Id = Guid.NewGuid(),
-                Name = name
-            };
-
-            _databaseContext.Shops.Add(shop);
-            await _databaseContext.SaveChangesAsync();
+                Name = name,
+            });
 
             return shop.ToDto();
         }
 
         public async Task<ICollection<ShopDto>> GetAllAsync()
         {
-            return await _databaseContext.Shops.Select(e => e.ToDto()).ToListAsync();
+            return await _repository.Set<Shop>().Select(e => e.ToDto()).ToListAsync();
         }
     }
 }

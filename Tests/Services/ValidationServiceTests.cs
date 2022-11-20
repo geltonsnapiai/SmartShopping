@@ -1,6 +1,8 @@
 ﻿using FakeItEasy;
 using SmartShopping.Services;
 using SmartShopping.Models;
+using SmartShopping.Repositories;
+using MockQueryable.FakeItEasy;
 
 namespace SmartShopping.Tests.Services
 {
@@ -26,10 +28,17 @@ namespace SmartShopping.Tests.Services
         [InlineData("email@111.222.333.44444", true, "Invalid email", false)]
         public void EmailValidationTest(string email, bool emailIsTaken, string expectedErrorMessage, bool expectedResult)
         {
-            var userService = A.Fake<IUserService>();
-            A.CallTo(() => userService.GetUserByEmail(email))
-                .Returns(emailIsTaken ? new User { Email = email } : null);
-            var validatorService = new ValidationService(userService);
+            var users = new List<User>();
+            if (emailIsTaken) users.Add(new User { Email = email });
+
+            var mock = users.AsQueryable().BuildMockDbSet();
+
+            var repository = A.Fake<IRepository>();
+            
+            A.CallTo(() => repository.Set<User>())
+                .Returns(mock);
+            
+            var validatorService = new ValidationService(repository);
 
             bool result = validatorService.ValidateEmail(email, out string? errorMessage);
 
@@ -43,8 +52,8 @@ namespace SmartShopping.Tests.Services
         [InlineData(null, "Username is empty", false)]
         public void UsernameValidationTest(string username, string expectedErrorMessage, bool expectedResult)
         {
-            var userService = A.Fake<IUserService>();
-            var validatorService = new ValidationService(userService);
+            var repository = A.Fake<IRepository>();
+            var validatorService = new ValidationService(repository);
 
             bool result = validatorService.ValidateUsername(username, out string? errorMessage);
 
@@ -62,8 +71,8 @@ namespace SmartShopping.Tests.Services
         [InlineData("aA1.", null, true)]
         public void PasswordValidationTest(string password, string expectedErrorMessage, bool expectedResult)
         {
-            var userService = A.Fake<IUserService>();
-            var validatorService = new ValidationService(userService);
+            var repository = A.Fake<IRepository>();
+            var validatorService = new ValidationService(repository);
 
             bool result = validatorService.ValidatePassword(password, out string? errorMessage);
 

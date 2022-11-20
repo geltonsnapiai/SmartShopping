@@ -29,29 +29,22 @@ namespace SmartShopping.Controllers
         public async Task<IActionResult> Register([FromBody] RegisterDto dto)
         {
             var (ok, invalidField, errorMessage) = await _validationService.ValidateRegistrationAsync(dto);
-            if (!ok) 
-                return ValidationProblem(detail:errorMessage, type : invalidField);
+            if (!ok)
+                return ValidationProblem(detail: errorMessage, type: invalidField);
 
-            var user = new User
+            try
             {
-                Id = Guid.NewGuid(),
-                Name = dto.Name,
-                Email = dto.Email,
-                Role = "user",
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password)
-            };
-
-            (string accessToken, string refreshToken) = _tokenService.GenerateTokens(user);
-            user.RefreshToken = refreshToken;
-            user.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
-            
-            await _userService.CreateUserAsync(user);
-
-            return Created("success", new
+                (string accessToken, string refreshToken) = await _userService.RegisterUserAsync(dto);
+                return Created("api/auth/user", new
+                {
+                    AccessToken = accessToken,
+                    RefreshToken = refreshToken
+                });
+            }
+            catch (AuthenticationException ex)
             {
-                AccessToken = accessToken,
-                RefreshToken = refreshToken
-            });
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost("login")]
@@ -60,23 +53,18 @@ namespace SmartShopping.Controllers
             if (string.IsNullOrEmpty(dto.Email) || string.IsNullOrEmpty(dto.Password))
                 return BadRequest("Invalid client request");
 
-            var user = await _userService.GetUserByEmailAsync(dto.Email);
-
-            if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
-                return BadRequest(new { message = "Username or password is incorrect" });
-
-            var tokens = _tokenService.GenerateTokens(user);
-
-            user.RefreshToken = tokens.RefreshToken;
-            user.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
-
-            await _userService.UpdateUserAsync(user);
-
-            return Ok(new
+            try
             {
-                AccessToken = tokens.AccessToken,
-                RefreshToken = tokens.RefreshToken
-            });
+                (string accessToken, string refreshToken) = await _userService.LoginUserAsync(dto);
+                return Ok(new
+                {
+                    AccessToken = accessToken,
+                    RefreshToken = refreshToken
+                });
+            } catch (AuthenticationException ex)
+            {
+                return Unauthorized(ex.Message);
+            }
         }
 
         [HttpPost("refresh")]
@@ -85,67 +73,52 @@ namespace SmartShopping.Controllers
             if (string.IsNullOrEmpty(dto.AccessToken) || string.IsNullOrEmpty(dto.RefreshToken))
                 return BadRequest("Invalid client request");
 
-            string accessToken = dto.AccessToken;
-            string refreshToken = dto.RefreshToken;
-
-            var email = _tokenService.GetEmailFromAccessToken(accessToken);
-            if (email == null) return BadRequest("Invalid client request");
-            
-            var user = await _userService.GetUserByEmailAsync(email);
-
-            if (user == null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
-                return BadRequest("Invalid client request");
-
-            var tokens = _tokenService.GenerateTokens(user);
-
-            user.RefreshToken = tokens.RefreshToken;
-            user.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
-            await _userService.UpdateUserAsync(user);
-
-            return Ok(new
+            try
             {
-                AccessToken = tokens.AccessToken,
-                RefreshToken = tokens.RefreshToken
-            });
+                (string accessToken, string refreshToken) = await _userService.RefreshTokensAsync(dto);
+                return Ok(new
+                {
+                    AccessToken = accessToken,
+                    RefreshToken = refreshToken
+                });
+            }
+            catch (AuthenticationException ex)
+            {
+                return Unauthorized(ex.Message);
+            }
         }
 
         [HttpPost("revoke"), Authorize]
         public async Task<IActionResult> Revoke()
         {
-            var email = User.FindFirst(ClaimTypes.Email)?.Value;
-            if (email is null) return BadRequest();
-
-            var user = await _userService.GetUserByEmailAsync(email);
-            if (user == null) return BadRequest();
-
-            user.RefreshToken = null;
-            await _userService.UpdateUserAsync(user);
-
+            var id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (id is null) 
+                return BadRequest("Token does not contain id claim");
+            await _userService.RevokeTokensByUserIdAsync(Guid.Parse(id));
+            
             return NoContent();
         }
 
         [HttpGet("user"), Authorize]
         public async Task<IActionResult> GetUser()
         {
-            var email = User.FindFirst(ClaimTypes.Email)?.Value;
-            if (email is null) return BadRequest();
+            var id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (id is null)
+                return BadRequest("Token does not contain id claim");
 
-            var user = await _userService.GetUserByEmailAsync(email);
-            if (user == null) return BadRequest();
+            var user = await _userService.GetUserByIdAsync(Guid.Parse(id));
 
             return Ok(user);
         }
 
-        [HttpDelete("deleteuser"), Authorize]
+        [HttpDelete("deleteUser"), Authorize]
         public async Task<IActionResult> DeleteUser()
         {
-            var email = User.FindFirst(ClaimTypes.Email)?.Value;
-            if (email is null) return BadRequest();
+            var id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (id is null)
+                return BadRequest("Token does not contain id claim");
 
-            var user = await _userService.GetUserByEmailAsync(email);
-            if (user == null) return BadRequest();
-
-            await _userService.DeleteUserAsync(user);
+            await _userService.DeleteUserByIdAsync(Guid.Parse(id));
 
             return Ok("success");
         }

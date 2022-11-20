@@ -41,7 +41,8 @@ namespace SmartShopping.Services
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, user.Role)
+                new Claim(ClaimTypes.Role, user.Role),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
             };
 
             var accessToken = GenerateAccessToken(claims);
@@ -71,10 +72,16 @@ namespace SmartShopping.Services
             SecurityToken securityToken;
             var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out securityToken);
             var jwtSecurityToken = securityToken as JwtSecurityToken;
-            if (jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+            if (jwtSecurityToken is null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
                 throw new SecurityTokenException("Invalid token");
 
             return principal;
+        }
+
+        public Guid GetIdFromAccessToken(string token)
+        {
+            var principal = GetPrincipalFromExpiredToken(token);
+            return Guid.Parse(principal.FindFirst(ClaimTypes.NameIdentifier)?.Value);
         }
     }
 }
