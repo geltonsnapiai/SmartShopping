@@ -42,7 +42,7 @@ export class SideBar extends Component {
                     </NavbarBrand>
                     {
                         (this.state.user !== null) && (
-                            <div className="d-flex align-items-center ms-4 mb-4">
+                            <div className="d-flex align-items-center ms-4 mb-4 mt-2">
                                 <div className="position-relative">
                                     <img className="rounded-circle" src="assets/img/avatar.jpg" alt="" style={{ width: "40px", height: "40px"}}/>
                                     {/* Notification circle */}
@@ -72,6 +72,12 @@ export class SideBar extends Component {
                             <NavLink tag={RRNavLink} to="/search">
                                 <i className="fa fa-search me-2"/>
                                 Search
+                            </NavLink>
+                        </NavItem>
+                        <NavItem className="w-100">
+                            <NavLink tag={RRNavLink} to="/cart">
+                                <i className="fa fa-shopping-cart me-2"/>
+                                Cart
                             </NavLink>
                         </NavItem>
                     </div>

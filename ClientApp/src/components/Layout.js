@@ -37,7 +37,7 @@ class Layout extends Component {
                     <SideBar open={this.state.open}/>
                     <div className={`content ${this.state.open ? "open" : ""}`}>
                         <Header user="true" toggleCallback={this.toggleSidebar}/>
-                        <div style={{minHeight: "100vh"}}>
+                        <div className="vh-100">
                             {this.props.children}
                         </div>
                         <Footer/>

@@ -6,6 +6,7 @@ import { Navigate, Outlet } from 'react-router-dom';
 import { authenticationService } from "./auth/AuthenticationServce";
 import Login from "./components/Auth/Login";
 import Register from "./components/Auth/Register";
+import { Cart } from "./components/Cart/Cart";
 
 export const AppRoutes = [
     {
@@ -28,6 +29,11 @@ export const AppRoutes = [
     {
         path: '/upload',
         element: <Upload />,
+        auth: true
+    },
+    {
+        path: '/cart',
+        element: <Cart />,
         auth: true
     },
     {

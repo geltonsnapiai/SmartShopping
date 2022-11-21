@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SmartShopping.Dtos;
-using SmartShopping.Models;
 using SmartShopping.Services;
 
 namespace SmartShopping.Controllers

@@ -1,10 +1,8 @@
 ﻿import React, { useEffect } from "react";
 import { Input, Form, Button } from "reactstrap";
-import { useState } from "react";
 import { UploadList } from "./UploadList/UploadList";
 import { addItem, deleteAll, uploadProducts, uploadProductsSelector, uploadProductsStatusSelector } from "../../state/slices/UploadProductsSlice";
 import { shopsSelector, shopsStatusSelector, loadShops } from "../../state/slices/ShopsSlice";
-import { authFetch } from "../../auth/AuthFetch";
 import { useDispatch, useSelector } from "react-redux";
 import { nanoid } from "nanoid";
 import { store } from "../../state/Store";
@@ -67,16 +65,16 @@ export function Upload() {
                         </Form>
                     </div>
                 </div>
-                <div class="col-sm-12 col-xl-6">
+                <div className="col-sm-12 col-xl-6">
                     <div className="bg-secondary rounded h-100 p-4">
                         <h4>Here will be element for uploading photos of receipts</h4>
                     </div>
                 </div>
                 <UploadList shops={shops}/>
                 {products.length !== 0 && (
-                    <div class="container-fluid pt-4 px-4">
-                        <div class="bg-secondary text-center rounded p-4">
-                            <div class="d-flex align-items-center justify-content-between mb-4">
+                    <div className="container-fluid pt-4 px-4">
+                        <div className="bg-secondary text-center rounded p-4">
+                            <div className="d-flex align-items-center justify-content-between mb-4">
                                 <Button color="primary" onClick={uploadHandler} disabled={productsStatus === asyncStatus.LOADING}>Upload</Button>
                                 <Button color="primary" onClick={deleteHandler} disabled={productsStatus === asyncStatus.LOADING}>Delete All</Button>
                             </div>

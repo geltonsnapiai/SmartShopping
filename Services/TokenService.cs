@@ -18,7 +18,7 @@ namespace SmartShopping.Services
                 issuer: "https://localhost:7100",
                 audience: "https://localhost:7100",
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(5),
+                expires: DateTime.Now.AddHours(2),
                 signingCredentials: signinCredentials
             );
 

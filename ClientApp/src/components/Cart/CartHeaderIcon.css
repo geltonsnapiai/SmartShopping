@@ -1,0 +1,37 @@
+.iconAnimation {
+    animation: frames .5s forwards;
+}
+
+.icon {
+    color: var(--primary);
+}
+
+@keyframes frames {
+    0% {
+        rotate: 0deg;
+        scale: 100%;
+    }
+    25% {
+        rotate: 15deg;
+        scale: 115%;
+        box-shadow: 0 0 5px 2px var(--primary);
+    }
+    50% {
+        rotate: -15deg;
+    }
+    62.5% {
+        rotate: 10deg;
+    }
+    75% {
+        rotate: -10deg;
+        scale: 115%;
+        box-shadow: 0 0 5px 2px var(--primary);
+    }
+    87.5% {
+        rotate: 10deg;
+    }
+    100% {
+        rotate: 0deg;
+        scale: 100%;
+    }
+}

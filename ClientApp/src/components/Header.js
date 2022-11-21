@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import { Button, Collapse, Navbar, NavbarBrand, NavbarToggler } from 'reactstrap';
+import { Button, Navbar, NavbarBrand, NavbarToggler } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { authenticationService } from '../auth/AuthenticationServce';
 import { useNavigate } from 'react-router-dom';
 import { NamedLogo } from './NamedLogo';
-import { ProfileButton } from './ProfileButton';
+import { ProfileButton } from './ProfileButton/ProfileButton';
 import { authFetch } from '../auth/AuthFetch';
+import { CartHeaderIcon } from './Cart/CartHeaderIcon';
 
 const withNavigate = (Component) => {
     return (props) => {
@@ -44,6 +45,7 @@ class Header extends Component {
                         <h2 className="text-primary ms-4 mb-0"><NamedLogo/></h2>
                     </NavbarBrand>
                     <div className="navbar-nav allign-items-center ms-auto">
+                        <CartHeaderIcon/>
                         <ProfileButton userName={this.state.user.name}/>
                     </div>
                 </Navbar>

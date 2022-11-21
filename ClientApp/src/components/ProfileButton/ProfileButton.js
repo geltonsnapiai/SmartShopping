@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { authenticationService } from '../auth/AuthenticationServce';
+import { authenticationService } from '../../auth/AuthenticationServce';
 
 
 export function ProfileButton({ userName }) {
@@ -23,9 +23,9 @@ export function ProfileButton({ userName }) {
             </a>
             
             {state? (<div className="dropdown-menu dropdown-menu-end bg-secondary border-0 rounded-0 rounded-bottom m-0 show">
-                <button className="dropdown-item">My Profile</button>
+                {/* <button className="dropdown-item">My Profile</button>
                 <button className="dropdown-item">Settings</button>
-                <button className="dropdown-item">Shopping List</button>
+                <button className="dropdown-item">Shopping List</button> */}
                 <button className="dropdown-item" onClick={() => authenticationService.logout()}>Log out</button>
             </div>)
             : null}

@@ -1,0 +1,33 @@
+.tag {
+    border-radius: 5px;
+}
+
+.tag-tag {
+    color: #000;
+    background-color: #ffc107;
+    border-color: #ffc107;
+}
+
+.tag-shop {
+    color: #fff;
+    background-color: #198754;
+    border-color: #198754;
+}
+
+.tag-strategy-full {
+    color: #fff;
+    background-color: var(--bs-success);
+    border-color: var(--bs-success);
+}
+
+.tag-strategy-incomplete {
+    color: #000;
+    background-color: var(--bs-warning);
+    border-color: var(--bs-warning);
+}
+
+.tag-strategy-empty {
+    color: #fff;
+    background-color: var(--bs-danger);
+    border-color: var(--bs-danger);
+}
