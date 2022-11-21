@@ -22,6 +22,7 @@ builder.Services.AddControllers();
 
 builder.Services.AddScoped<IRepository, Repository>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ICalculatorService, CalculatorService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IShopService, ShopService>();
 builder.Services.AddScoped<IProductService, ProductService>();

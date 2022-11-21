@@ -23,14 +23,14 @@ export const productListSlice = createSlice({
     extraReducers: (builder) => {
         builder
             .addCase(loadProducts.fulfilled, (state, action) => {
-                state.asyncStatus = asyncStatus.SUCCESS;
+                state.status = asyncStatus.SUCCESS;
                 state.productList = action.payload;
             })
             .addMatcher(isPending(loadProducts), state => {
-                state.asyncStatus = asyncStatus.LOADING;
+                state.status = asyncStatus.LOADING;
             })
             .addMatcher(isRejected(loadProducts), (state, action) => {
-                state.asyncStatus = asyncStatus.ERROR;
+                state.status = asyncStatus.ERROR;
                 state.error = action.error;
             });
     }

@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux"
-import { Spinner } from "reactstrap";
 import { asyncStatus } from "../../state/AsyncStatus";
 import { productListStatusSelector, productListSelector } from "../../state/slices/ProductListSlice"
+import { Spinner } from "../Spinner";
 import { ProductListItem } from "./ProductListItem"
 
 export const ProductList = () => {
@@ -10,8 +10,7 @@ export const ProductList = () => {
 
     if (status === asyncStatus.LOADING) {
         return (
-            // TODO: Spinner / loading animation
-            <></>
+            <Spinner/>
         );
     }
 

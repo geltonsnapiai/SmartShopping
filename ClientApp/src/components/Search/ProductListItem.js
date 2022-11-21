@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Tag } from "./Tag";
+import { Tag } from "../Tag/Tag";
 import './ProductListItem.css';
 import { useDispatch } from "react-redux";
 import { animate } from "../../state/slices/CartHeaderIconSlice";
@@ -29,7 +29,7 @@ export const ProductListItem = (props) => {
                             {props.product.prices.map(p => (
                                 <tr>
                                     <td>{p.shop}</td>
-                                    <td>{p.price} €</td>
+                                    <td>{p.price.toFixed(2)} €</td>
                                     <td>{(new Date(p.date)).toLocaleDateString()}</td>
                                 </tr>
                             ))}
