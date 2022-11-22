@@ -42,7 +42,7 @@ namespace SmartShopping.Services
             var user = await _repository.Set<User>().FirstOrDefaultAsync(e => e.Email.Equals(loginData.Email));
 
             if (user is null || !BCrypt.Net.BCrypt.Verify(loginData.Password, user.PasswordHash))
-                throw new AuthenticationException("Username or password is incorrect");
+                throw new AuthenticationException("Email or password is incorrect");
 
             var tokens = _tokenService.GenerateTokens(user);
 
